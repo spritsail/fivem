@@ -17,7 +17,7 @@ RUN mkdir -p /output \
 
 ADD start.sh /output/
 
-ADD server.cfg /optput/opt/cfs-server-data
+ADD server.cfg /output/opt/cfx-server-data
 
 #================
 
@@ -27,6 +27,8 @@ COPY --from=builder /output/ /
 
 RUN apk add -U tini \
  && chmod +x /start.sh
+
+WORKDIR /config
 
 ENTRYPOINT ["/sbin/tini","--"]
 CMD ["/start.sh"]

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SERVER_ARGS=$SERVER_ARGS:"+exec /config/server.cfg"
+SERVER_ARGS="+set citizen_dir /opt/cfx-server/citizen/ +exec /config/server.cfg $SERVER_ARGS"
 
 if [ ! -d /config ]; then
   echo "Config directory not found, please mount!"
@@ -12,12 +12,6 @@ if [ ! "$(ls -A /config)" ]; then
   echo "Creating default configs, please add a licence key and restart!"
   cp -r /opt/cfx-server-data/* /config
   exit 1
-fi
-
-cd /opt/cfx-server
-
-if [ ! -d cache ]; then
-  mkdir cache
 fi
 
 exec /opt/cfx-server/FXServer $SERVER_ARGS $*
