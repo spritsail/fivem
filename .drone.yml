@@ -1,0 +1,36 @@
+pipeline:
+  identify:
+    image: alpine
+    commands:
+      - set -o pipefail
+      - wget -qO- http://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/ 
+          | sed -n 's|.*href="\([^"]*\)/.*|\1|p' | tail -n1
+          | tee /dev/stderr > .fivem_ver
+      - sed 's/\-.*$//' .fivem_ver > .fivem_tag
+
+  build:
+    image: spritsail/docker-build
+    volumes: [ '/var/run/docker.sock:/var/run/docker.sock' ]
+    repo: fivem-dev
+    build_args:
+      - 'FIVEM_VER=%file: .fivem_ver'
+
+
+  publish:
+    image: spritsail/docker-publish
+    volumes: [ '/var/run/docker.sock:/var/run/docker.sock' ]
+    secrets: [ docker_username, docker_password, microbadger_token ]
+    when: { branch: [ master, pass ], event: [ push, tag, deployment ] }
+    from: fivem-dev
+    repo: spritsail/fivem
+    tags:
+      - 'latest'
+      - '%file: .fivem_tag'
+
+  notify:
+    image: appleboy/drone-telegram
+    when: { status: [ success, failure ] }
+    secrets: [ telegram_token, telegram_to ]
+    message: |
+      *{{repo.owner}}/{{repo.name}} [{{commit.branch}}]*: Build #{{build.number}}: *{{uppercase build.status}}*
+      {{build.link}}
