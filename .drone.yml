@@ -13,8 +13,8 @@ pipeline:
     volumes: [ '/var/run/docker.sock:/var/run/docker.sock' ]
     repo: fivem-dev
     build_args:
+      - 'FIVEM_NUM=%file: .fivem_tag'
       - 'FIVEM_VER=%file: .fivem_ver'
-
 
   publish:
     image: spritsail/docker-publish

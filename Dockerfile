@@ -1,7 +1,15 @@
 FROM alpine:3.7 as builder
 
+ARG FIVEM_NUM=507
 ARG FIVEM_VER=507-1006eacd1951849fd9c9e25a3b813132389d794b
 ARG DATA_VER=fefd22590476055a34c0a2245e3a522b62fc89e1
+
+LABEL maintainer="Spritsail <fivem@spritsail.io>" \
+      org.label-schema.vendor="Spritsail" \
+      org.label-schema.name="FiveM" \
+      org.label-schema.url="https://fivem.net" \
+      org.label-schema.description="FiveM is a modification for Grand Theft Auto V enabling you to play multiplayer on customized dedicated servers." \
+      org.label-schema.version=${FIVEM_NUM}
 
 WORKDIR /output
 
