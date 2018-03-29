@@ -20,7 +20,7 @@ pipeline:
     image: spritsail/docker-publish
     volumes: [ '/var/run/docker.sock:/var/run/docker.sock' ]
     secrets: [ docker_username, docker_password, microbadger_token ]
-    when: { event: [ push, tag, deployment ] }
+    when: { branch: [ master ], event: [ push, tag, deployment ] }
     from: fivem-dev
     repo: spritsail/fivem
     tags:

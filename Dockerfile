@@ -1,15 +1,11 @@
+ARG FIVEM_NUM=558
+ARG FIVEM_VER=558-deb66d570b3e57159522ff3323bb3e3b80af1a3d
+ARG DATA_VER=a6814fe938b735ce5cdd83530c18924d3c7edd21
+
 FROM alpine:3.7 as builder
 
-ARG FIVEM_NUM=507
-ARG FIVEM_VER=507-1006eacd1951849fd9c9e25a3b813132389d794b
-ARG DATA_VER=fefd22590476055a34c0a2245e3a522b62fc89e1
-
-LABEL maintainer="Spritsail <fivem@spritsail.io>" \
-      org.label-schema.vendor="Spritsail" \
-      org.label-schema.name="FiveM" \
-      org.label-schema.url="https://fivem.net" \
-      org.label-schema.description="FiveM is a modification for Grand Theft Auto V enabling you to play multiplayer on customized dedicated servers." \
-      org.label-schema.version=${FIVEM_NUM}
+ARG FIVEM_VER
+ARG DATA_VER
 
 WORKDIR /output
 
@@ -28,6 +24,17 @@ ADD server.cfg opt/cfx-server-data
 #================
 
 FROM scratch
+
+ARG FIVEM_VER
+ARG FIVEM_NUM
+
+LABEL maintainer="Spritsail <fivem@spritsail.io>" \
+      org.label-schema.vendor="Spritsail" \
+      org.label-schema.name="FiveM" \
+      org.label-schema.url="https://fivem.net" \
+      org.label-schema.description="FiveM is a modification for Grand Theft Auto V enabling you to play multiplayer on customized dedicated servers." \
+      io.spritsail.version.fivem=${FIVEM_VER} \
+      org.label-schema.version=${FIVEM_NUM}
 
 COPY --from=builder /output/ /
 
