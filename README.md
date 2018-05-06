@@ -17,7 +17,7 @@ The container should be stopped so fivem can be configured to the user requireme
 
 ## Licence Key
 
-A freely obtained licence key is required to use this server, which should be entered in `server.cfg`. A tutorial on how to obtain a licence key can be found [here](https://forum.fivem.net/t/explained-how-to-make-add-a-server-key/56120)
+A freely obtained licence key is required to use this server, which should be declared as `$LICENCE_KEY`. A tutorial on how to obtain a licence key can be found [here](https://forum.fivem.net/t/explained-how-to-make-add-a-server-key/56120)
 
 ## Usage
 
@@ -35,5 +35,5 @@ docker run -d \
 
 ### Environment Varibles
 
-- `LICENSE_KEY` - This can be optionally specified to be entered into the configuration file. Is only effective on container first-run, or when the configuration is absent.
-- `RCON_PASSWORD` - A password to use for the RCON functionality of the fxserver. If not specified, a random 16 character password is assigned.
+- `LICENSE_KEY` - This is a required variable for the licence key needed to start the server.
+- `RCON_PASSWORD` - A password to use for the RCON functionality of the fxserver. If not specified, a random 16 character password is assigned. This is only used upon creation of the default configs
