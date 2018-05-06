@@ -28,9 +28,6 @@ pipeline:
       - '%file: .fivem_tag'
 
   notify:
-    image: appleboy/drone-telegram
-    when: { status: [ success, failure ] }
-    secrets: [ telegram_token, telegram_to ]
-    message: |
-      *{{repo.owner}}/{{repo.name}} [{{commit.branch}}]*: Build #{{build.number}}: *{{uppercase build.status}}*
-      {{build.link}}
+    image: spritsail/notify
+    when: { status: [ success, failure] }
+    secrets: [ webhook_url, notify_token ]
