@@ -9,7 +9,7 @@ if ! find . -mindepth 1 | read; then
   echo -e "----------------------------------------------\n"
 fi
 
-if [ -z ${LICENCE_KEY} ]; then
+if [ -z "${LICENCE_KEY}" ]; then
   echo "Licence key not found in environment, please create one at https://keymaster.fivem.net!"
   exit 1
 fi
