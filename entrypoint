@@ -1,0 +1,20 @@
+#!/bin/sh
+if ! find . -mindepth 1 | read; then
+  echo -e "Creating default configs...\n"
+  cp -r /opt/cfx-server-data/* /config
+  RCON_PASS="${RCON_PASSWORD-$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 16)}"
+  sed -i "s/{RCON_PASS}/${RCON_PASS}/g" /config/server.cfg;
+  echo "----------------------------------------------"
+  echo "Your RCON password is set to: ${RCON_PASS}"
+  echo -e "----------------------------------------------\n"
+fi
+
+if [ -z ${LICENCE_KEY} ]; then
+  echo "Licence key not found in environment, please create one at https://keymaster.fivem.net!"
+  exit 1
+fi
+
+exec /opt/cfx-server/FXServer \
+       +set citizen_dir /opt/cfx-server/citizen/ \
+       +exec /config/server.cfg $@ \
+       +set sv_licenseKey ${LICENCE_KEY}
