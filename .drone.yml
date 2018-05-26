@@ -4,7 +4,9 @@ pipeline:
     commands:
       - set -o pipefail
       - wget -qO- http://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/ 
-          | sed -n 's|.*href="\([^"]*\)/.*|\1|p' | tail -n1
+          | sed -n 's|.*href="\([^"]*\)/.*|\1|p'
+          | grep -E '^[0-9]{3,}-'
+          | tail -n1
           | tee /dev/stderr > .fivem_ver
       - sed 's/\-.*$//' .fivem_ver > .fivem_tag
 
