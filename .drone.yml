@@ -1,22 +1,8 @@
 pipeline:
-  identify:
-    image: alpine
-    commands:
-      - set -o pipefail
-      - wget -qO- http://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/ 
-          | sed -n 's|.*href="\([^"]*\)/.*|\1|p'
-          | grep -E '^[0-9]{3,}-'
-          | tail -n1
-          | tee /dev/stderr > .fivem_ver
-      - sed 's/\-.*$//' .fivem_ver > .fivem_tag
-
   build:
     image: spritsail/docker-build
     volumes: [ '/var/run/docker.sock:/var/run/docker.sock' ]
     repo: fivem-dev
-    build_args:
-      - 'FIVEM_NUM=%file: .fivem_tag'
-      - 'FIVEM_VER=%file: .fivem_ver'
 
   publish:
     image: spritsail/docker-publish
@@ -27,7 +13,7 @@ pipeline:
     repo: spritsail/fivem
     tags:
       - 'latest'
-      - '%file: .fivem_tag'
+      - '%label: org.label-schema.version'
 
   notify:
     image: spritsail/notify
