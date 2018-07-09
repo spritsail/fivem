@@ -36,8 +36,8 @@ LABEL maintainer="Spritsail <fivem@spritsail.io>" \
       org.label-schema.name="FiveM" \
       org.label-schema.url="https://fivem.net" \
       org.label-schema.description="FiveM is a modification for Grand Theft Auto V enabling you to play multiplayer on customized dedicated servers." \
-      io.spritsail.version.fivem=${FIVEM_VER} \
-      org.label-schema.version=${FIVEM_NUM}
+      org.label-schema.version=${FIVEM_NUM} \
+      io.spritsail.version.fivem=${FIVEM_VER}
 
 COPY --from=builder /output/ /
 
