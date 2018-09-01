@@ -30,6 +30,7 @@ FROM scratch
 
 ARG FIVEM_VER
 ARG FIVEM_NUM
+ARG DATA_VER
 
 LABEL maintainer="Spritsail <fivem@spritsail.io>" \
       org.label-schema.vendor="Spritsail" \
@@ -37,7 +38,8 @@ LABEL maintainer="Spritsail <fivem@spritsail.io>" \
       org.label-schema.url="https://fivem.net" \
       org.label-schema.description="FiveM is a modification for Grand Theft Auto V enabling you to play multiplayer on customized dedicated servers." \
       org.label-schema.version=${FIVEM_NUM} \
-      io.spritsail.version.fivem=${FIVEM_VER}
+      io.spritsail.version.fivem=${FIVEM_VER} \
+      io.spritsail.version.fivem_data=${DATA_VER}
 
 COPY --from=builder /output/ /
 
