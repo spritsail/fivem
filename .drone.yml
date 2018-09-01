@@ -13,7 +13,7 @@ pipeline:
     repo: spritsail/fivem
     tags:
       - 'latest'
-      - '%label: org.label-schema.version'
+      - '%label org.label-schema.version'
 
   notify:
     image: spritsail/notify
