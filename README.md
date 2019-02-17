@@ -29,6 +29,7 @@ docker run -d \
   --restart=on-failure \
   -e LICENCE_KEY=<your-license-here>
   -p 30120:30120 \
+  -p 30120:30120/udp \
   -v /volumes/fivem:/config \
   spritsail/fivem
 ```
