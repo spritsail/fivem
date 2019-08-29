@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  api:
+    image: spritsail/fivem
+    container_name: container-name
+    restart: always
+    stdin_open: true
+    tty: true
+    volumes:
+      - "/path/to/ressources/folder:/config"
+    ports:
+      - "30120:30120"
+      - "30120:30120/udp"
+    environment:
+      LICENCE_KEY: "dcnnfp93ip6dcbv7e4xg90yj3bryicww"
