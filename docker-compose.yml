@@ -13,4 +13,4 @@ services:
       - "30120:30120"
       - "30120:30120/udp"
     environment:
-      LICENCE_KEY: "dcnnfp93ip6dcbv7e4xg90yj3bryicww"
+      LICENCE_KEY: "license-key-here"
