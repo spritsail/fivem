@@ -31,8 +31,12 @@ docker run -d \
   -p 30120:30120 \
   -p 30120:30120/udp \
   -v /volumes/fivem:/config \
+  -ti \
   spritsail/fivem
 ```
+
+_It is important that you use `interactive` and `pseudo-tty` options otherwise the container will crash on startup_
+See [issue #3](https://github.com/spritsail/fivem/issues/3)
 
 ### Environment Varibles
 
