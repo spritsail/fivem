@@ -31,11 +31,9 @@ docker run -d \
   -p 30120:30120 \
   -p 30120:30120/udp \
   -v /volumes/fivem:/config \
-  -t \
-  -i \
+  -ti \
   spritsail/fivem
 ```
-
 
 ### Environment Varibles
 
