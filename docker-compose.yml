@@ -3,12 +3,12 @@ version: '3'
 services:
   api:
     image: spritsail/fivem
-    container_name: container-name
+    container_name: FiveM
     restart: always
     stdin_open: true
     tty: true
     volumes:
-      - "/path/to/ressources/folder:/config"
+      - "/path/to/resources/folder:/config"
     ports:
       - "30120:30120"
       - "30120:30120/udp"
