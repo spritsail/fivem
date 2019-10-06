@@ -1,4 +1,5 @@
 #!/bin/sh
+
 if ! find . -mindepth 1 | read; then
   echo -e "Creating default configs...\n"
   cp -r /opt/cfx-server-data/* /config
@@ -19,5 +20,6 @@ cd /opt/cfx-server/
 
 exec /opt/cfx-server/FXServer \
        +set citizen_dir /opt/cfx-server/citizen/ \
-       +exec /config/server.cfg $@ \
-       +set sv_licenseKey ${LICENCE_KEY}
+       +exec /config/server.cfg \
+       +set sv_licenseKey ${LICENCE_KEY} \
+       $@
