@@ -14,6 +14,9 @@ if [ -z "${LICENCE_KEY}" ]; then
   exit 1
 fi
 
+# Fixes 'Could not find component cache storage file (components.json)' error
+cd /opt/cfx-server/
+
 exec /opt/cfx-server/FXServer \
        +set citizen_dir /opt/cfx-server/citizen/ \
        +exec /config/server.cfg $@ \
