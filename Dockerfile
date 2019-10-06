@@ -2,7 +2,7 @@ ARG FIVEM_NUM=1629
 ARG FIVEM_VER=1629-c9a5392278baa4c161740b0a44e60bd98d0c5efb
 ARG DATA_VER=64a26ad1de1206ee338a37f93aff35c228613a16
 
-FROM spritsail/alpine:3.9 as builder
+FROM spritsail/alpine:3.10 as builder
 
 ARG FIVEM_VER
 ARG DATA_VER
