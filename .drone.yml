@@ -33,7 +33,25 @@ steps:
     - push
 
 ---
+kind: pipeline
+name: update-readme
+
+steps:
+- name: dockerhub-readme
+  pull: always
+  image: jlesage/drone-push-readme
+  settings:
+    username: {from_secret: docker_username}
+    password: {from_secret: docker_password}
+    repo: spritsail/fivem
+  when:
+    branch:
+    - master
+    event:
+    - push
+
+---
 kind: signature
-hmac: 3f33d3e3eba462947cdff2d191ccafacfaf2edad59797cb54b85b51475477716
+hmac: 1cc30ca3a5aa97bfa10cc8039edcbafb6a42d30abb40f95f15c655c24ea51c00
 
 ...
