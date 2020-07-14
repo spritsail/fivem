@@ -19,11 +19,11 @@ if [ -z "${NO_DEFAULT_CONFIG}" ]; then
   CONFIG_ARGS="$CONFIG_ARGS +exec /config/server.cfg"
 fi
 if [ -z "${NO_LICENSE_KEY}" ]; then
-  if [ -z "${LICENCE_KEY}" ]; then
-    echo "Licence key not found in environment, please create one at https://keymaster.fivem.net!"
+  if [ -z "${LICENSE_KEY}" ]; then
+    echo "License key not found in environment, please create one at https://keymaster.fivem.net!"
     exit 1
   fi
-  CONFIG_ARGS="$CONFIG_ARGS +set sv_licenseKey ${LICENCE_KEY}"
+  CONFIG_ARGS="$CONFIG_ARGS +set sv_licenseKey ${LICENSE_KEY}"
 fi
 
 
