@@ -24,8 +24,6 @@ ADD entrypoint usr/bin/entrypoint
 
 RUN chmod +x /output/usr/bin/entrypoint
 
-#================
-
 FROM scratch
 
 ARG FIVEM_VER
