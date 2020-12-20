@@ -14,7 +14,7 @@ if ! find . -mindepth 1 | read; then
   echo -e "----------------------------------------------\n"
 fi
 
-CONFIG_ARGS=
+CONFIG_ARGS=$CONFIG_ARGS
 if [ -z "${NO_DEFAULT_CONFIG}" ]; then
   CONFIG_ARGS="$CONFIG_ARGS +exec /config/server.cfg"
 fi
