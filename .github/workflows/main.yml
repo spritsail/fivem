@@ -47,4 +47,4 @@ jobs:
           platforms: linux/386,linux/amd64
           push: true
           tags: |
-            ghcr.io/hoogeveen-roleplay/fivem:latest
+            ghcr.io/jlwbr/fivem:latest
