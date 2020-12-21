@@ -4,7 +4,7 @@ if [ -n "$DEBUG" ]; then
     set -x
 fi
 
-if [ -z "${SUBDIR}" ]; then
+if [ -n "$SUBDIR" ]; then
     cd $SUBDIR
 fi
 
