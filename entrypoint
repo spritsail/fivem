@@ -4,14 +4,16 @@ if [ -n "$DEBUG" ]; then
     set -x
 fi
 
-if ! find . -mindepth 1 | read; then
-  echo -e "Creating default configs...\n"
-  cp -r /opt/cfx-server-data/* /config
-  RCON_PASS="${RCON_PASSWORD-$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 16)}"
-  sed -i "s/{RCON_PASS}/${RCON_PASS}/g" /config/server.cfg;
-  echo "----------------------------------------------"
-  echo "Your RCON password is set to: ${RCON_PASS}"
-  echo -e "----------------------------------------------\n"
+if [ -z "${SYNC_FILE}" ]; then
+    while : ; do
+        [[ -f "${SYNC_FILE}" ]] && break
+        echo "Waiting for repo to sync."
+        sleep 100
+    done
+fi
+
+if [ -z "${SUBDIR}" ]; then
+    cd $SUBDIR
 fi
 
 CONFIG_ARGS=$CONFIG_ARGS
