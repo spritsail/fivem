@@ -8,7 +8,7 @@ if [ -z "${SUBDIR}" ]; then
     cd $SUBDIR
 fi
 
-if [ -z "${SYNC_FILE}" ]; then
+if [ -z "${NO_DEFAULT_CONFIG}" ]; then
     while : ; do
         [[ -f "${SUBDIR}/server.cfg" ]] && break
         echo "Waiting for repo to sync."
@@ -18,7 +18,7 @@ fi
 
 CONFIG_ARGS=$CONFIG_ARGS
 if [ -z "${NO_DEFAULT_CONFIG}" ]; then
-  CONFIG_ARGS="$CONFIG_ARGS +exec /config/server.cfg"
+  CONFIG_ARGS="$CONFIG_ARGS +exec ${SUBDIR}/server.cfg"
 fi
 if [ -z "${NO_LICENSE_KEY}" ]; then
   if [ -z "${LICENCE_KEY}" ]; then
