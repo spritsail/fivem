@@ -4,16 +4,16 @@ if [ -n "$DEBUG" ]; then
     set -x
 fi
 
+if [ -z "${SUBDIR}" ]; then
+    cd $SUBDIR
+fi
+
 if [ -z "${SYNC_FILE}" ]; then
     while : ; do
-        [[ -f "${SYNC_FILE}" ]] && break
+        [[ -f "${SUBDIR}/server.cfg" ]] && break
         echo "Waiting for repo to sync."
         sleep 100
     done
-fi
-
-if [ -z "${SUBDIR}" ]; then
-    cd $SUBDIR
 fi
 
 CONFIG_ARGS=$CONFIG_ARGS
