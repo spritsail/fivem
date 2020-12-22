@@ -17,7 +17,7 @@ RUN wget -O- http://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/$
  && wget -O- http://github.com/citizenfx/cfx-server-data/archive/${DATA_VER}.tar.gz \
         | tar xz --strip-components=1 -C opt/cfx-server-data \
     \
- && apk -p $PWD add tini git
+ && apk -p $PWD add tini
 
 ADD server.cfg opt/cfx-server-data
 ADD entrypoint usr/bin/entrypoint
