@@ -45,6 +45,7 @@ COPY --from=builder /output/ /
 
 WORKDIR /config
 EXPOSE 30120
+EXPOSE 40120
 
 # Default to an empty CMD, so we can use it to add seperate args to the binary
 CMD [""]
