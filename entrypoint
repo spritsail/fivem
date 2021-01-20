@@ -14,10 +14,15 @@ if ! find . -mindepth 1 | read; then
   echo -e "----------------------------------------------\n"
 fi
 
+if [ -z "$NO_ONESYNC" ]; then
+  ONESYNC_ARGS="+set onesync on"
+fi
+
 CONFIG_ARGS=
 if [ -z "${NO_DEFAULT_CONFIG}" ]; then
-  CONFIG_ARGS="$CONFIG_ARGS +exec /config/server.cfg"
+  CONFIG_ARGS="$CONFIG_ARGS $ONESYNC_ARGS +exec /config/server.cfg"
 fi
+
 if [ -z "${NO_LICENSE_KEY}" ]; then
   if [ -z "${LICENCE_KEY}" ]; then
     echo "Licence key not found in environment, please create one at https://keymaster.fivem.net!"
@@ -25,7 +30,6 @@ if [ -z "${NO_LICENSE_KEY}" ]; then
   fi
   CONFIG_ARGS="$CONFIG_ARGS +set sv_licenseKey ${LICENCE_KEY}"
 fi
-
 
 exec /opt/cfx-server/FXServer \
        +set citizen_dir /opt/cfx-server/citizen/ \
