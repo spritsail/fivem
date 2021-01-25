@@ -15,7 +15,7 @@ if ! find . -mindepth 1 | read; then
 fi
 
 if [ -z "$NO_ONESYNC" ]; then
-  ONESYNC_ARGS="+set onesync on +set onesync_population"
+  ONESYNC_ARGS="+set onesync on +set onesync_population true"
 fi
 
 CONFIG_ARGS=
