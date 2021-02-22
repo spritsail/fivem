@@ -31,7 +31,10 @@ if [ -z "${NO_LICENSE_KEY}" ]; then
   CONFIG_ARGS="$CONFIG_ARGS +set sv_licenseKey ${LICENCE_KEY}"
 fi
 
-exec /opt/cfx-server/FXServer \
+exec /opt/cfx-server/ld-musl-x86_64.so.1  \
+  --library-path "/usr/lib/v8/:/lib/:/usr/lib/" \
+  -- \
+  /opt/cfx-server/FXServer \
        +set citizen_dir /opt/cfx-server/citizen/ \
        $CONFIG_ARGS \
-       $@
+       $*
