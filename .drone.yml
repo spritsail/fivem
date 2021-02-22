@@ -10,22 +10,16 @@ steps:
 - name: build
   pull: always
   image: spritsail/docker-build
-  settings:
-    repo: fivem-dev
 
 - name: publish
   pull: always
   image: spritsail/docker-publish
   settings:
-    from: fivem-dev
     repo: spritsail/fivem
     tags:
     - latest
     - "%label org.label-schema.version"
-    username:
-      from_secret: docker_username
-    password:
-      from_secret: docker_password
+    login: {from_secret: docker_login}
   when:
     branch:
     - master
@@ -52,6 +46,6 @@ steps:
 
 ---
 kind: signature
-hmac: 1cc30ca3a5aa97bfa10cc8039edcbafb6a42d30abb40f95f15c655c24ea51c00
+hmac: 954c38b43b7e331958a8007a1f966d007e29c546a4c28fee8050e20a03a4a134
 
 ...
