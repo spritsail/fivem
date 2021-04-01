@@ -27,7 +27,7 @@ Use the docker-compose script provided if you wish to run a couchdb server with 
 docker run -d \
   --name FiveM \
   --restart=on-failure \
-  -e LICENCE_KEY=<your-license-here>
+  -e LICENCE_KEY=<your-licence-here>
   -p 30120:30120 \
   -p 30120:30120/udp \
   -v /volumes/fivem:/config \
