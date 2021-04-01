@@ -40,7 +40,7 @@ See [issue #3](https://github.com/spritsail/fivem/issues/3)
 
 ### Environment Varibles
 
-- `LICENSE_KEY` - This is a required variable for the licence key needed to start the server.
+- `LICENCE_KEY` - This is a required variable for the licence key needed to start the server.
 - `RCON_PASSWORD` - A password to use for the RCON functionality of the fxserver. If not specified, a random 16 character password is assigned. This is only used upon creation of the default configs
 - `NO_DEFAULT_CONFIG` - Optional. Set to any non-zero value to disable the default exec config.
 - `NO_LICENCE_KEY` - Optional. Set to any non-zero value to disable specifying the licence key in the environment. Useful if your licence key is in a config file.
