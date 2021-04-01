@@ -17,17 +17,17 @@ The container should be stopped so fivem can be configured to the user requireme
 
 ## Licence Key
 
-A freely obtained licence key is required to use this server, which should be declared as `$LICENCE_KEY`. A tutorial on how to obtain a licence key can be found [here](https://forum.fivem.net/t/explained-how-to-make-add-a-server-key/56120)
+A freely obtained licence key is required to use this server, which should be declared as `$LICENCE_KEY`. A tutorial on how to obtain a licence key can be found [here](https://forum.fivem.net/t/explained-how-to-make-add-a-server-key/56120).
 
 ## Usage
 
-Use the docker-compose script provided if you wish to run a couchdb server with FiveM, else use the line below:
+Use the `docker-compose` script provided if you wish to run a couchdb server with FiveM, else use the line below:
 
 ```sh
 docker run -d \
   --name FiveM \
   --restart=on-failure \
-  -e LICENCE_KEY=<your-licence-here>
+  -e LICENCE_KEY=<your-licence-here> \
   -p 30120:30120 \
   -p 30120:30120/udp \
   -v /volumes/fivem:/config \
@@ -38,7 +38,7 @@ docker run -d \
 _It is important that you use `interactive` and `pseudo-tty` options otherwise the container will crash on startup_
 See [issue #3](https://github.com/spritsail/fivem/issues/3)
 
-### Environment Varibles
+### Environment Variables
 
 - `LICENCE_KEY` - This is a required variable for the licence key needed to start the server.
 - `RCON_PASSWORD` - A password to use for the RCON functionality of the fxserver. If not specified, a random 16 character password is assigned. This is only used upon creation of the default configs
