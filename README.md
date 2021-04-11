@@ -15,19 +15,19 @@ This docker image allows you to run a server for FiveM, a modded GTA multiplayer
 Upon first run, the configuration is generated in the host mount for the `/config` directory.
 The container should be stopped so fivem can be configured to the user requirements in the `server.cfg`.
 
-## Licence Key
+## License Key
 
-A freely obtained licence key is required to use this server, which should be declared as `$LICENCE_KEY`. A tutorial on how to obtain a licence key can be found [here](https://forum.fivem.net/t/explained-how-to-make-add-a-server-key/56120)
+A freely obtained license key is required to use this server, which should be declared as `$LICENSE_KEY`. A tutorial on how to obtain a license key can be found [here](https://forum.fivem.net/t/explained-how-to-make-add-a-server-key/56120).
 
 ## Usage
 
-Use the docker-compose script provided if you wish to run a couchdb server with FiveM, else use the line below:
+Use the `docker-compose` script provided if you wish to run a couchdb server with FiveM, else use the line below:
 
 ```sh
 docker run -d \
   --name FiveM \
   --restart=on-failure \
-  -e LICENCE_KEY=<your-license-here>
+  -e LICENSE_KEY=<your-license-here> \
   -p 30120:30120 \
   -p 30120:30120/udp \
   -v /volumes/fivem:/config \
@@ -38,10 +38,10 @@ docker run -d \
 _It is important that you use `interactive` and `pseudo-tty` options otherwise the container will crash on startup_
 See [issue #3](https://github.com/spritsail/fivem/issues/3)
 
-### Environment Varibles
+### Environment Variables
 
-- `LICENSE_KEY` - This is a required variable for the licence key needed to start the server.
+- `LICENSE_KEY` - This is a required variable for the license key needed to start the server.
 - `RCON_PASSWORD` - A password to use for the RCON functionality of the fxserver. If not specified, a random 16 character password is assigned. This is only used upon creation of the default configs
 - `NO_DEFAULT_CONFIG` - Optional. Set to any non-zero value to disable the default exec config.
-- `NO_LICENCE_KEY` - Optional. Set to any non-zero value to disable specifying the licence key in the environment. Useful if your licence key is in a config file.
+- `NO_LICENSE_KEY` - Optional. Set to any non-zero length value to disable specifying the license key in the environment. Useful if your license key is in a config file.
 - `NO_ONESYNC` - Optional. Set to any non-zero value to disable OneSync being added to the default configs.

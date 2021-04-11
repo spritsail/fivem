@@ -23,13 +23,18 @@ if [ -z "${NO_DEFAULT_CONFIG}" ]; then
     CONFIG_ARGS="$CONFIG_ARGS $ONESYNC_ARGS +exec /config/server.cfg"
 fi
 
-if [ -z "${NO_LICENSE_KEY}" ]; then
-    if [ -z "${LICENCE_KEY}" ]; then
-        echo "Licence key not found in environment, please create one at https://keymaster.fivem.net!"
+# English is hard
+if [ -z "${NO_LICENSE_KEY}${NO_LICENCE_KEY}" ]; then
+    if [ -z "${LICENSE_KEY}" ] && [ -n "${LICENCE_KEY}" ]; then
+        LICENSE_KEY="${LICENCE_KEY}"
+    fi
+
+    if [ -z "${LICENSE_KEY}" ]; then
+        echo "License key not found in environment, please create one at https://keymaster.fivem.net!"
         exit 1
     fi
 
-    CONFIG_ARGS="$CONFIG_ARGS +set sv_licenseKey ${LICENCE_KEY}"
+    CONFIG_ARGS="$CONFIG_ARGS +set sv_licenseKey ${LICENSE_KEY}"
 fi
 
 exec /opt/cfx-server/ld-musl-x86_64.so.1 \
