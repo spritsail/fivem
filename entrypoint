@@ -37,6 +37,11 @@ if [ -z "${NO_LICENSE_KEY}${NO_LICENCE_KEY}" ]; then
     CONFIG_ARGS="$CONFIG_ARGS +set sv_licenseKey ${LICENSE_KEY}"
 fi
 
+if [ -n "${ENFORCE_GAME_BUILD}" ]; then
+    ENFORCE_GAME_BUILD="${ENFORCE_GAME_BUILD}"
+    CONFIG_ARGS="$CONFIG_ARGS +set sv_enforceGameBuild ${ENFORCE_GAME_BUILD}"
+fi
+
 exec /opt/cfx-server/ld-musl-x86_64.so.1 \
     --library-path "/usr/lib/v8/:/lib/:/usr/lib/" \
     -- \

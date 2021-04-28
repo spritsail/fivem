@@ -45,3 +45,4 @@ See [issue #3](https://github.com/spritsail/fivem/issues/3)
 - `NO_DEFAULT_CONFIG` - Optional. Set to any non-zero value to disable the default exec config.
 - `NO_LICENSE_KEY` - Optional. Set to any non-zero length value to disable specifying the license key in the environment. Useful if your license key is in a config file.
 - `NO_ONESYNC` - Optional. Set to any non-zero value to disable OneSync being added to the default configs.
+- `ENFORCE_GAME_BUILD` - Optional. Sets the game build to a non-default version number.
