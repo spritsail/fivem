@@ -1,5 +1,5 @@
-ARG FIVEM_NUM=5562
-ARG FIVEM_VER=5562-25984c7003de26d4a222e897a782bb1f22bebedd
+ARG FIVEM_NUM=5963
+ARG FIVEM_VER=5963-f62bb9a9cf25e22f1f6048afba91b5a067c1d686
 ARG DATA_VER=3e8e6dfc010e87313e8be81ddb0ded5fc583624c
 
 FROM spritsail/alpine:3.16 as builder
@@ -9,7 +9,7 @@ ARG DATA_VER
 
 WORKDIR /output
 
-RUN wget -O- http://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/${FIVEM_VER}/fx.tar.xz \
+RUN wget -O- https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/${FIVEM_VER}/fx.tar.xz \
         | tar xJ --strip-components=1 \
             --exclude alpine/dev --exclude alpine/proc \
             --exclude alpine/run --exclude alpine/sys \
