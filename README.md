@@ -38,6 +38,10 @@ docker run -d \
 _It is important that you use `interactive` and `pseudo-tty` options otherwise the container will crash on startup_
 See [issue #3](https://github.com/spritsail/fivem/issues/3)
 
+### Web UI (txAdmin)
+
+The web UI can be enabled by not passing any `+exec` config to the FXServer binary. This can be achieved by setting the `NO_DEFAULT_CONFIG` environment variable (see below).
+
 ### Environment Variables
 
 - `LICENSE_KEY` - This is a required variable for the license key needed to start the server.
