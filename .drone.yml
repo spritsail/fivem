@@ -17,12 +17,11 @@ steps:
   settings:
     repo: spritsail/fivem
     tags:
-    - latest
-    - "%label org.label-schema.version"
+    - stable
     login: {from_secret: docker_login}
   when:
     branch:
-    - master
+    - stable
     event:
     - push
 
@@ -40,12 +39,12 @@ steps:
     repo: spritsail/fivem
   when:
     branch:
-    - master
+    - stable
     event:
     - push
 
 ---
 kind: signature
-hmac: 954c38b43b7e331958a8007a1f966d007e29c546a4c28fee8050e20a03a4a134
+hmac: 75c00faa415b45d416042132f39baf20f4b5435fc7eac0eed8b3510f2c3aa7d0
 
 ...
