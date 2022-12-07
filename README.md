@@ -46,6 +46,21 @@ This image has two tags - a `latest` tag (the default), based on the most recent
 
 The web UI can be enabled by not passing any `+exec` config to the FXServer binary. This can be achieved by setting the `NO_DEFAULT_CONFIG` environment variable (see below).
 
+`txAdmin` stores it's configuration and database data in `/txAdmin`, so a volume can be set up to persist this data:
+
+```sh
+docker run -d \
+  --name FiveM \
+  --restart=on-failure \
+  -e LICENSE_KEY=<your-license-here> \
+  -p 30120:30120 \
+  -p 30120:30120/udp \
+  -v /volumes/fivem:/config \
+  -v /volumes/txData:/txData \ # Can use a named volume as well -v txData:/txData \
+  -ti \
+  spritsail/fivem
+```
+
 ### Environment Variables
 
 - `LICENSE_KEY` - This is a required variable for the license key needed to start the server.
