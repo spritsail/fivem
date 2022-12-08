@@ -9,6 +9,7 @@ services:
     tty: true
     volumes:
       - "/path/to/resources/folder:/config"
+      - "/path/to/txData/folder:/txData"
     ports:
       - "30120:30120"
       - "30120:30120/udp"
