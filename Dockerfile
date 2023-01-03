@@ -2,7 +2,7 @@ ARG FIVEM_NUM=6185
 ARG FIVEM_VER=6185-59cf66109905d613b0b068c949e386a25e62d1f5
 ARG DATA_VER=3e8e6dfc010e87313e8be81ddb0ded5fc583624c
 
-FROM spritsail/alpine:3.16 as builder
+FROM spritsail/alpine:3.17 as builder
 
 ARG FIVEM_VER
 ARG DATA_VER
