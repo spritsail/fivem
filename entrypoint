@@ -7,16 +7,9 @@ fi
 # Empty config args defaults to loading txAdmin
 CONFIG_ARGS=
 
-# Temporary during the transition - this way old configs still trigger the old (no txadmin by default) behaviour.
-NO_TXADMIN = "DONTANSWERTHEPHONETOLESTERCREST"
-
-# Warn if NO_TXADMIN is the default.
-if [ "${NO_TXADMIN}" = "DONTANSWERTHEPHONETOLESTERCREST" ]; then
-    >&2 echo "------------------------------------------------------"
-    >&2 echo "WARNING - Default options will soon change to enabling"
-    >&2 echo "txAdmin by default. Set \$NO_TXADMIN to disable this."
-    >&2 echo "------------------------------------------------------"
-fi
+# Temporary magic string during the transition - this way old configs still trigger the old (no txadmin by default) behaviour.
+# This is set in the Docker file so it can be overridden - here for reference.
+# NO_TXADMIN = "DONTANSWERTHEPHONETOLESTERCREST"
 
 # If NO_TXADMIN is defined, configure the server as standalone.
 if [ -n "${NO_TXADMIN}" ]; then
@@ -32,8 +25,10 @@ if [ -n "${NO_TXADMIN}" ]; then
 
     # If all these are true (& NO_TXADMIN above), CONFIG_ARGS will be empty, and txAdmin would start. 
     if [ -n "${NO_DEFAULT_CONFIG}" ] && [ -z "${$*}"]; then
-        >&2 printf "NO_TXADMIN specified, but no config args given. Server would load txAdmin anyway."
-        exit 1
+        if [ "${NO_TXADMIN}" != "DONTANSWERTHEPHONETOLESTERCREST" ]; then # Remove this if block when we remove the magic string - silly edge case!
+            >&2 printf "NO_DEFAULT_CONFIG specified, but no config args given. Server would load txAdmin anyway."
+            exit 1
+        fi
     fi
 
     # Set some default options.
@@ -41,28 +36,37 @@ if [ -n "${NO_TXADMIN}" ]; then
         CONFIG_ARGS="$CONFIG_ARGS $ONESYNC_ARGS +exec /config/server.cfg"
     fi
 
-    # I pronounce everything below this point.. Deprecated!
-    if [ -z "$NO_ONESYNC" ]; then
-        ONESYNC_ARGS="+set onesync on +set onesync_population true"
-    fi
+    # If it's set to the magic value, we can assume it's the deprecated logic. Do all the old things!
+    if [ "${NO_TXADMIN}" = "DONTANSWERTHEPHONETOLESTERCREST" ]; then
+        >&2 echo "------------------------------------------------------"
+        >&2 echo "WARNING - Default options will soon change to enabling"
+        >&2 echo "txAdmin by default. Set \$NO_TXADMIN to disable this."
+        >&2 echo "------------------------------------------------------"
 
-    # English is hard
-    if [ -z "${NO_LICENSE_KEY}${NO_LICENCE_KEY}" ]; then
-        if [ -z "${LICENSE_KEY}" ] && [ -n "${LICENCE_KEY}" ]; then
-            LICENSE_KEY="${LICENCE_KEY}"
+        # I pronounce everything below this point.. Deprecated!
+        if [ -z "$NO_ONESYNC" ]; then
+            ONESYNC_ARGS="+set onesync on +set onesync_population true"
+            >2& "Automaticly defined Onesync is deprecated. Please ensure 'onesync on' is set in your server.cfg"
         fi
 
-        if [ -z "${NO_DEFAULT_CONFIG}"] && [ -z "${LICENSE_KEY}" ]; then
-            >&2 printf "License key not found in environment, please create one at https://keymaster.fivem.net!\n"
-            exit 1
-        fi
+        # English is hard
+        if [ -z "${NO_LICENSE_KEY}${NO_LICENCE_KEY}" ]; then
+            if [ -z "${LICENSE_KEY}" ] && [ -n "${LICENCE_KEY}" ]; then
+                LICENSE_KEY="${LICENCE_KEY}"
+            fi
 
-        if [ -z "${CONFIG_ARGS}" ] && [ -n "${LICENSE_KEY}" ] && [ -n "${NO_DEFAULT_CONFIG}" ]; then
-            >&2 printf "txAdmin does not use the \$LICENSE_KEY environment variable.\nPlease remove it and set it through the txadmin web UI\n\n"
-            exit 1
-        fi
+            if [ -z "${NO_DEFAULT_CONFIG}"] && [ -z "${LICENSE_KEY}" ]; then
+                >&2 printf "License key not found in environment, please create one at https://keymaster.fivem.net!\n"
+                exit 1
+            fi
 
-        CONFIG_ARGS="$CONFIG_ARGS +set sv_licenseKey ${LICENSE_KEY}"
+            if [ -z "${CONFIG_ARGS}" ] && [ -n "${LICENSE_KEY}" ] && [ -n "${NO_DEFAULT_CONFIG}" ]; then
+                >&2 printf "txAdmin does not use the \$LICENSE_KEY environment variable.\nPlease remove it and set it through the txadmin web UI\n\n"
+                exit 1
+            fi
+
+            CONFIG_ARGS="$CONFIG_ARGS +set sv_licenseKey ${LICENSE_KEY}"
+        fi
     fi
 fi
 
