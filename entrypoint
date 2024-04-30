@@ -4,42 +4,66 @@ if [ -n "$DEBUG" ]; then
     set -x
 fi
 
-if ! find . -mindepth 1 | read -r; then
-    >&2 echo "Creating default configs..."
-    cp -r /opt/cfx-server-data/* /config
-    RCON_PASS="${RCON_PASSWORD-$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 16)}"
-    sed -i "s/{RCON_PASS}/${RCON_PASS}/g" /config/server.cfg;
-    >&2 echo "----------------------------------------------"
-    >&2 echo "RCON password is set to: ${RCON_PASS}"
-    >&2 echo "----------------------------------------------"
-fi
-
-if [ -z "$NO_ONESYNC" ]; then
-    ONESYNC_ARGS="+set onesync on +set onesync_population true"
-fi
-
+# Empty config args defaults to loading txAdmin
 CONFIG_ARGS=
-if [ -z "${NO_DEFAULT_CONFIG}" ]; then
-    CONFIG_ARGS="$CONFIG_ARGS $ONESYNC_ARGS +exec /config/server.cfg"
+
+# Temporary during the transition - this way old configs still trigger the old (no txadmin by default) behaviour.
+NO_TXADMIN = "DONTANSWERTHEPHONETOLESTERCREST"
+
+# Warn if NO_TXADMIN is the default.
+if [ "${NO_TXADMIN}" = "DONTANSWERTHEPHONETOLESTERCREST" ]; then
+    >&2 echo "------------------------------------------------------"
+    >&2 echo "WARNING - Default options will soon change to enabling"
+    >&2 echo "txAdmin by default. Set \$NO_TXADMIN to disable this."
+    >&2 echo "------------------------------------------------------"
 fi
 
-# English is hard
-if [ -z "${NO_LICENSE_KEY}${NO_LICENCE_KEY}" ]; then
-    if [ -z "${LICENSE_KEY}" ] && [ -n "${LICENCE_KEY}" ]; then
-        LICENSE_KEY="${LICENCE_KEY}"
+# If NO_TXADMIN is defined, configure the server as standalone.
+if [ -n "${NO_TXADMIN}" ]; then
+    if ! find . -mindepth 1 | read -r; then
+        >&2 echo "Creating default configs..."
+        cp -r /opt/cfx-server-data/* /config
+        RCON_PASS="${RCON_PASSWORD-$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 16)}"
+        sed -i "s/{RCON_PASS}/${RCON_PASS}/g" /config/server.cfg;
+        >&2 echo "----------------------------------------------"
+        >&2 echo "RCON password is set to: ${RCON_PASS}"
+        >&2 echo "----------------------------------------------"
     fi
 
-    if [ -z "${NO_DEFAULT_CONFIG}"] && [ -z "${LICENSE_KEY}" ]; then
-        >&2 printf "License key not found in environment, please create one at https://keymaster.fivem.net!\n"
+    # If all these are true (& NO_TXADMIN above), CONFIG_ARGS will be empty, and txAdmin would start. 
+    if [ -n "${NO_DEFAULT_CONFIG}" ] && [ -z "${$*}"]; then
+        >&2 printf "NO_TXADMIN specified, but no config args given. Server would load txAdmin anyway."
         exit 1
     fi
 
-    if [ -z "${CONFIG_ARGS}" ] && [ -n "${LICENSE_KEY}" ] && [ -n "${NO_DEFAULT_CONFIG}" ]; then
-        >&2 printf "txadmin does not use the \$LICENSE_KEY environment variable.\nPlease remove it and set it through the txadmin web UI\n\n"
-        exit 1
+    # Set some default options.
+    if [ -z "${NO_DEFAULT_CONFIG}" ]; then
+        CONFIG_ARGS="$CONFIG_ARGS $ONESYNC_ARGS +exec /config/server.cfg"
     fi
 
-    CONFIG_ARGS="$CONFIG_ARGS +set sv_licenseKey ${LICENSE_KEY}"
+    # I pronounce everything below this point.. Deprecated!
+    if [ -z "$NO_ONESYNC" ]; then
+        ONESYNC_ARGS="+set onesync on +set onesync_population true"
+    fi
+
+    # English is hard
+    if [ -z "${NO_LICENSE_KEY}${NO_LICENCE_KEY}" ]; then
+        if [ -z "${LICENSE_KEY}" ] && [ -n "${LICENCE_KEY}" ]; then
+            LICENSE_KEY="${LICENCE_KEY}"
+        fi
+
+        if [ -z "${NO_DEFAULT_CONFIG}"] && [ -z "${LICENSE_KEY}" ]; then
+            >&2 printf "License key not found in environment, please create one at https://keymaster.fivem.net!\n"
+            exit 1
+        fi
+
+        if [ -z "${CONFIG_ARGS}" ] && [ -n "${LICENSE_KEY}" ] && [ -n "${NO_DEFAULT_CONFIG}" ]; then
+            >&2 printf "txAdmin does not use the \$LICENSE_KEY environment variable.\nPlease remove it and set it through the txadmin web UI\n\n"
+            exit 1
+        fi
+
+        CONFIG_ARGS="$CONFIG_ARGS +set sv_licenseKey ${LICENSE_KEY}"
+    fi
 fi
 
 exec /opt/cfx-server/ld-musl-x86_64.so.1 \
