@@ -4,9 +4,8 @@
 
 # [spritsail/fivem][hub]
 
-[![](https://images.microbadger.com/badges/image/spritsail/fivem.svg)](https://microbadger.com/images/spritsail/fivem)
-[![Latest Version](https://images.microbadger.com/badges/version/spritsail/fivem.svg)][hub]
-[![Git Commit](https://images.microbadger.com/badges/commit/spritsail/fivem.svg)][git]
+[![Latest Version](https://img.shields.io/docker/v/spritsail/fivem)][git]
+[![Image Size](https://img.shields.io/docker/image-size/spritsail/fivem)][hub]
 [![Docker Pulls](https://img.shields.io/docker/pulls/spritsail/fivem.svg)][hub]
 [![Docker Stars](https://img.shields.io/docker/stars/spritsail/fivem.svg)][hub]
 [![Build Status](https://drone.spritsail.io/api/badges/spritsail/fivem/status.svg)][drone]
