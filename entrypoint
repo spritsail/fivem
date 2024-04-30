@@ -5,13 +5,13 @@ if [ -n "$DEBUG" ]; then
 fi
 
 if ! find . -mindepth 1 | read -r; then
-    echo "Creating default configs..."
+    >&2 echo "Creating default configs..."
     cp -r /opt/cfx-server-data/* /config
     RCON_PASS="${RCON_PASSWORD-$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 16)}"
     sed -i "s/{RCON_PASS}/${RCON_PASS}/g" /config/server.cfg;
-    echo "----------------------------------------------"
-    echo "RCON password is set to: ${RCON_PASS}"
-    echo "----------------------------------------------"
+    >&2 echo "----------------------------------------------"
+    >&2 echo "RCON password is set to: ${RCON_PASS}"
+    >&2 echo "----------------------------------------------"
 fi
 
 if [ -z "$NO_ONESYNC" ]; then
@@ -29,8 +29,13 @@ if [ -z "${NO_LICENSE_KEY}${NO_LICENCE_KEY}" ]; then
         LICENSE_KEY="${LICENCE_KEY}"
     fi
 
-    if [ -z "${LICENSE_KEY}" ]; then
-        echo "License key not found in environment, please create one at https://keymaster.fivem.net!"
+    if [ -z "${NO_DEFAULT_CONFIG}"] && [ -z "${LICENSE_KEY}" ]; then
+        >&2 printf "License key not found in environment, please create one at https://keymaster.fivem.net!\n"
+        exit 1
+    fi
+
+    if [ -z "${CONFIG_ARGS}" ] && [ -n "${LICENSE_KEY}" ] && [ -n "${NO_DEFAULT_CONFIG}" ]; then
+        >&2 printf "txadmin does not use the \$LICENSE_KEY environment variable.\nPlease remove it and set it through the txadmin web UI\n\n"
         exit 1
     fi
 
