@@ -1,4 +1,3 @@
-ARG FIVEM_NUM=10191
 ARG FIVEM_VER=10191-0bf3d3e1a9fc2e77cc0103d036df3515beeac2dd
 ARG DATA_VER=0e7ba538339f7c1c26d0e689aa750a336576cf02
 
@@ -18,6 +17,9 @@ RUN wget -O- https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/
         | tar xz --strip-components=1 -C opt/cfx-server-data \
     \
  && apk -p $PWD add tini
+
+RUN FIVEM_NUM=$(echo "${FIVEM_VER}" | cut -d '-' -f 1)
+ENV FIVEM_NUM=${FIVEM_NUM}
 
 ADD server.cfg opt/cfx-server-data
 ADD entrypoint usr/bin/entrypoint
