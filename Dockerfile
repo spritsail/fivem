@@ -43,6 +43,9 @@ LABEL maintainer="Spritsail <fivem@spritsail.io>" \
 
 COPY --from=builder /output/ /
 
+# Temporary to allow soft deprecation.
+ENV NO_TXADMIN="DONTANSWERTHEPHONETOLESTERCREST"
+
 WORKDIR /config
 EXPOSE 30120
 
