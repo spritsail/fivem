@@ -2,15 +2,18 @@ version: '3'
 
 services:
   fivem:
-    image: spritsail/fivem
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: docker-fivem-fexemu
     container_name: fivem
     restart: always
     stdin_open: true
     tty: true
     volumes:
-      - "/path/to/resources/folder:/config"
+      - "fivem:/config"
       # Enable a volume mount for txAdmin's data files
-      # - "/path/to/txData/folder:/txData"
+      # - "txdata:/txData"
     ports:
       - "30120:30120"
       - "30120:30120/udp"
@@ -18,3 +21,7 @@ services:
       # - "40120:40120"
     environment:
       LICENSE_KEY: "license-key-here"
+
+volumes:
+  fivem:
+#  txdata:

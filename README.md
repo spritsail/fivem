@@ -1,18 +1,30 @@
-[hub]: https://hub.docker.com/r/spritsail/fivem
-[git]: https://github.com/spritsail/fivem
-[drone]: https://drone.spritsail.io/spritsail/fivem
-
-# [spritsail/fivem][hub]
-
-[![Latest Version](https://img.shields.io/docker/v/spritsail/fivem)][git]
-[![Image Size](https://img.shields.io/docker/image-size/spritsail/fivem)][hub]
-[![Docker Pulls](https://img.shields.io/docker/pulls/spritsail/fivem.svg)][hub]
-[![Docker Stars](https://img.shields.io/docker/stars/spritsail/fivem.svg)][hub]
-[![Build Status](https://drone.spritsail.io/api/badges/spritsail/fivem/status.svg)][drone]
+# docker-fivem-fexemu
 
 This docker image allows you to run a server for FiveM, a modded GTA multiplayer program.
 Upon first run, the configuration is generated in the host mount for the `/config` directory.
 The container should be stopped so fivem can be configured to the user requirements in the `server.cfg`.
+
+> [!NOTE]
+> **This container represents one of the attempts to make FiveM Server run on ARM64 devices using FEX-Emu!**
+> 
+> References:
+> - [FEX-Emu](https://github.com/FEX-Emu/FEX)
+> - [deploying-a-fivem-server-in-ubuntu-on-aarch64-arm64-machine (forum.cfx.re)](https://forum.cfx.re/t/deploying-a-fivem-server-in-ubuntu-on-aarch64-arm64-machine/5185384)
+
+> [!TIP]
+> For AMD64 devices or VMs it is recommended to use a different Docker container image e.g. [spritsail/fivem](https://github.com/spritsail/fivem) although this container image also works on AMD64 devices and VMs.
+
+> [!IMPORTANT]
+> The Docker container must be built on the device to be executed (especially on ARM64) using, for example, Docker Build for FEX-Emu to work under Docker.
+> Therefore, there is no container image on a Docker registry.
+
+> [!WARNING]
+> - Running it on an AMD64 device or VM is done without using FEX-Emu and therefore remains native.
+> - RedM Frameworks that require the steam web api key may not work on ARM64 devices or VMs in combination with FEX-Emu.
+
+> [!CAUTION]
+> Only building and using on AMD64 and ARM64 is supported. 
+> Architectures such as ARMv7 or other architectures are not supported with this image.
 
 ## License Key
 
@@ -23,6 +35,11 @@ A freely obtained license key is required to use this server, which should be de
 Use the `docker-compose` script provided if you wish to run a couchdb server with FiveM, else use the line below:
 
 ```sh
+git clone https://github.com/LizenzFass78851/docker-fivem-fexemu docker-fivem-fexemu \
+  cd docker-fivem-fexemu
+
+docker build . -t docker-fivem-fexemu
+
 docker run -d \
   --name FiveM \
   --restart=on-failure \
@@ -31,7 +48,7 @@ docker run -d \
   -p 30120:30120/udp \
   -v /volumes/fivem:/config \
   -ti \
-  spritsail/fivem
+  docker-fivem-fexemu
 ```
 
 _It is important that you use `interactive` and `pseudo-tty` options otherwise the container will crash on startup_
@@ -48,6 +65,11 @@ The web UI can be enabled by not passing any `+exec` config to the FXServer bina
 `txAdmin` stores it's configuration and database data in `/txData`, so a volume can be set up to persist this data:
 
 ```sh
+git clone https://github.com/LizenzFass78851/docker-fivem-fexemu docker-fivem-fexemu \
+  cd docker-fivem-fexemu
+
+docker build . -t docker-fivem-fexemu
+
 docker run -d \
   --name FiveM \
   --restart=on-failure \
@@ -58,7 +80,7 @@ docker run -d \
   -v /volumes/fivem:/config \
   -v /volumes/txData:/txData \ # Can use a named volume as well -v txData:/txData \
   -ti \
-  spritsail/fivem
+  docker-fivem-fexemu
 ```
 
 ### Environment Variables

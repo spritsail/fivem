@@ -42,10 +42,11 @@ if [ -z "${NO_LICENSE_KEY}${NO_LICENCE_KEY}" ]; then
     CONFIG_ARGS="$CONFIG_ARGS +set sv_licenseKey ${LICENSE_KEY}"
 fi
 
-exec /opt/cfx-server/ld-musl-x86_64.so.1 \
-    --library-path "/usr/lib/v8/:/lib/:/usr/lib/" \
+exec $( [ "$(uname -m)" = "aarch64" ] && echo "FEXInterpreter" ) \
+    $CFX_SERVER/alpine/opt/cfx-server/ld-musl-x86_64.so.1 \
+    --library-path "$CFX_SERVER/alpine/usr/lib/v8/:$CFX_SERVER/alpine/lib/:$CFX_SERVER/alpine/usr/lib/" \
     -- \
-    /opt/cfx-server/FXServer \
-        +set citizen_dir /opt/cfx-server/citizen/ \
+    $CFX_SERVER/alpine/opt/cfx-server/FXServer \
+        +set citizen_dir $CFX_SERVER/alpine/opt/cfx-server/citizen/ \
         $CONFIG_ARGS \
         $*

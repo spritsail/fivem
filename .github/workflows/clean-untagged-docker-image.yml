@@ -1,0 +1,14 @@
+name: Clean untagged Docker Image
+
+on:
+  workflow_dispatch:
+
+jobs:
+  remove-package-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: purge packages
+        uses: unisg-ics-dsnlp/delete-untagged-containers@v1.4.0
+        with:
+          package_name: ${{ github.event.repository.name }} 
+          token: ${{ github.token }}
