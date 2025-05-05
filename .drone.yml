@@ -9,17 +9,51 @@ platform:
 steps:
 - name: build
   pull: always
-  image: spritsail/docker-build
+  image: registry.spritsail.io/spritsail/docker-build
 
-- name: publish
+- name: publish-spritsail
   pull: always
-  image: spritsail/docker-publish
+  image: registry.spritsail.io/spritsail/docker-publish
   settings:
+    registry: registry.spritsail.io
+    login: {from_secret: spritsail_login}
     repo: spritsail/fivem
     tags:
     - latest
     - "%label org.label-schema.version"
+    delete: no  # so we can push to dockerhub+ghcr
+  when:
+    branch:
+    - master
+    event:
+    - push
+
+- name: publish-ghcr
+  pull: never
+  image: registry.spritsail.io/spritsail/docker-publish
+  settings:
+    registry: ghcr.io
+    login: {from_secret: ghcr_login}
+    repo: spritsail/fivem
+    tags:
+    - latest
+    - "%label org.label-schema.version"
+    delete: no  # so we can push to dockerhub
+  when:
+    branch:
+    - master
+    event:
+    - push
+
+- name: publish-dockerhub
+  pull: never
+  image: registry.spritsail.io/spritsail/docker-publish
+  settings:
     login: {from_secret: docker_login}
+    repo: spritsail/fivem
+    tags:
+    - latest
+    - "%label org.label-schema.version"
   when:
     branch:
     - master
@@ -46,6 +80,6 @@ steps:
 
 ---
 kind: signature
-hmac: 954c38b43b7e331958a8007a1f966d007e29c546a4c28fee8050e20a03a4a134
+hmac: 5a4a990e8643c2c9a3782f13e509469be27c7fdb517672697bd3e6e7234fc8dc
 
 ...
