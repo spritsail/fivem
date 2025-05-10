@@ -1,4 +1,4 @@
-# docker-fivem-fexemu
+# FiveM Server with FEX-Emu for additional ARM64 support as Docker Container
 
 This docker image allows you to run a server for FiveM, a modded GTA multiplayer program.
 Upon first run, the configuration is generated in the host mount for the `/config` directory.
@@ -20,7 +20,7 @@ The container should be stopped so fivem can be configured to the user requireme
 
 > [!WARNING]
 > - Running it on an AMD64 device or VM is done without using FEX-Emu and therefore remains native.
-> - RedM Frameworks that require the steam web api key may not work on ARM64 devices or VMs in combination with FEX-Emu.
+> - RedM Frameworks may not work on ARM64 devices or VMs in combination with FEX-Emu.
 
 > [!CAUTION]
 > Only building and using on AMD64 and ARM64 is supported. 
