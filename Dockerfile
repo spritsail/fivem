@@ -6,7 +6,11 @@ ARG FEX_VER=FEX-2512
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-FROM ubuntu:22.04 AS fex-builder
+# --------------------------------------------------------------------------------
+
+FROM ubuntu:22.04 AS fex-builder-amd64
+
+FROM --platform=arm64 ubuntu:22.04 AS fex-builder-arm64
 
 ARG DEBIAN_FRONTEND
 
@@ -24,18 +28,16 @@ ADD https://github.com/FEX-Emu/FEX.git#${FEX_VER} ./
 
 ARG CC=clang-13
 ARG CXX=clang++-13
-RUN if [ "$(uname -m)" = "aarch64" ]; then \
-        mkdir build; \
-        cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DUSE_LINKER=lld -DENABLE_LTO=True -DBUILD_TESTS=False -DENABLE_ASSERTIONS=False -G Ninja .; \
-        ninja; \
-    else \
-        mkdir build Bin; \
-        touch Bin/dummy.txt; \
-        echo "Build directory and dummy file created"; \
-    fi
+RUN mkdir build \
+    && cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DUSE_LINKER=lld -DENABLE_LTO=True -DBUILD_TESTS=False -DENABLE_ASSERTIONS=False -G Ninja . \
+    && ninja
 
 WORKDIR /FEX/build
 
+ARG TARGETARCH
+FROM fex-builder-${TARGETARCH} AS fex-builder
+
+# --------------------------------------------------------------------------------
 FROM ubuntu:22.04 AS fx-downloader
 
 ARG DEBIAN_FRONTEND
@@ -56,7 +58,38 @@ RUN mkdir -p /opt/cfx-server \
 
 ADD server.cfg /opt/cfx-server-data
 
-FROM ubuntu:22.04
+# --------------------------------------------------------------------------------
+FROM ubuntu:22.04 AS base-amd64
+
+FROM --platform=arm64 ubuntu:22.04 AS base-arm64
+
+ARG DEBIAN_FRONTEND
+
+RUN apt update \
+    && apt install -y \
+    curl \
+    squashfuse \
+    fuse3 \
+    squashfs-tools \
+    zenity \
+    qml-module-qtquick-controls \
+    qml-module-qtquick-controls2 \
+    qml-module-qtquick-dialogs \
+    libc6 \
+    libgcc-s1 \
+    libgl1 \
+    libqt5core5a \
+    libqt5gui5-gles \
+    libqt5qml5 \
+    libqt5quick5-gles \
+    libqt5widgets5 \
+    libstdc++6 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=fex-builder /FEX/Bin/* /usr/bin/
+
+ARG TARGETARCH
+FROM base-${TARGETARCH}
 
 ARG DEBIAN_FRONTEND
 
@@ -75,10 +108,7 @@ LABEL org.opencontainers.image.authors="" \
 
 RUN apt update \
     && apt install -y tini \
-    libcap-dev libglfw3-dev libepoxy-dev \
     && rm -rf /var/lib/apt/lists/*
-
-COPY --from=fex-builder /FEX/Bin/* /usr/bin/
 
 COPY --from=fx-downloader /opt/cfx-server /opt/cfx-server
 COPY --from=fx-downloader /opt/cfx-server-data /opt/cfx-server-data
