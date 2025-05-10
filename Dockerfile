@@ -38,6 +38,31 @@ ARG TARGETARCH
 FROM fex-builder-${TARGETARCH} AS fex-builder
 
 # --------------------------------------------------------------------------------
+
+FROM ubuntu:22.04 AS fex-rootfs-amd64
+
+FROM --platform=arm64 ubuntu:22.04 AS fex-rootfs-arm64
+
+ARG DEBIAN_FRONTEND
+
+RUN apt-get update \
+    && apt-get install -y jq curl squashfs-tools-ng \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /root/.fex-emu/RootFS/Ubuntu_22_04
+RUN curl -L https://rootfs.fex-emu.gg/RootFS_links.json -o /tmp/RootFS_links.json \
+    && curl -L "$(jq -r '.v1 | ."Ubuntu 22.04 (SquashFS)" | .URL' /tmp/RootFS_links.json)" -o /tmp/ubuntu.sqsh \
+    && sqfs2tar /tmp/ubuntu.sqsh | tar -x -p --numeric-owner -C ./
+
+WORKDIR /root/.fex-emu
+
+RUN echo '{"Config":{"RootFS":"Ubuntu_22_04"}}' > ./Config.json
+
+ARG TARGETARCH
+FROM fex-rootfs-${TARGETARCH} AS fex-rootfs
+
+# --------------------------------------------------------------------------------
+
 FROM ubuntu:22.04 AS fx-downloader
 
 ARG DEBIAN_FRONTEND
@@ -87,6 +112,7 @@ RUN apt update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=fex-builder /FEX/Bin/* /usr/bin/
+COPY --from=fex-rootfs /root/.fex-emu /root/.fex-emu
 
 ARG TARGETARCH
 FROM base-${TARGETARCH}
