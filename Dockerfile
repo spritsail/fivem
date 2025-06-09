@@ -6,11 +6,13 @@ ARG FEX_VER=FEX-2512
 
 ARG DEBIAN_FRONTEND=noninteractive
 
+FROM debian:bookworm-slim AS main
+
 # --------------------------------------------------------------------------------
 
-FROM debian:bookworm-slim AS fex-builder-amd64
+FROM main AS fex-builder-amd64
 
-FROM --platform=arm64 debian:bookworm-slim AS fex-builder-arm64
+FROM --platform=arm64 main AS fex-builder-arm64
 
 ARG DEBIAN_FRONTEND
 
@@ -39,9 +41,9 @@ FROM fex-builder-${TARGETARCH} AS fex-builder
 
 # --------------------------------------------------------------------------------
 
-FROM debian:bookworm-slim AS fex-rootfs-amd64
+FROM main AS fex-rootfs-amd64
 
-FROM --platform=arm64 debian:bookworm-slim AS fex-rootfs-arm64
+FROM --platform=arm64 main AS fex-rootfs-arm64
 
 ARG DEBIAN_FRONTEND
 
@@ -63,7 +65,7 @@ FROM fex-rootfs-${TARGETARCH} AS fex-rootfs
 
 # --------------------------------------------------------------------------------
 
-FROM debian:bookworm-slim AS fx-downloader
+FROM main AS fx-downloader
 
 ARG DEBIAN_FRONTEND
 
@@ -84,9 +86,9 @@ RUN mkdir -p /opt/cfx-server \
 ADD server.cfg /opt/cfx-server-data
 
 # --------------------------------------------------------------------------------
-FROM debian:bookworm-slim AS base-amd64
+FROM main AS base-amd64
 
-FROM --platform=arm64 debian:bookworm-slim AS base-arm64
+FROM --platform=arm64 main AS base-arm64
 
 ARG DEBIAN_FRONTEND
 
