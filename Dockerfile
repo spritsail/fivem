@@ -155,3 +155,4 @@ EXPOSE 30120
 CMD [""]
 
 ENTRYPOINT ["tini", "--", "/usr/bin/entrypoint"]
+STOPSIGNAL SIGKILL
