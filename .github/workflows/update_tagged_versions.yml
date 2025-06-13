@@ -44,6 +44,20 @@ jobs:
           [ -n "$without_suffix" ] && [[ "$without_suffix" =~ ^[0-9]+-[0-9a-f]{40}$ ]] && echo 'patching Dockerfile' && sed -i "s|ARG FIVEM_VER=.*|ARG FIVEM_VER=${without_suffix}|g" $GITHUB_WORKSPACE/Dockerfile; \
           done
 
+      - name: update fex-emu
+        env:
+          API_URL: "https://api.github.com/repos/FEX-Emu/FEX/releases/latest"
+        run: |
+          [ "${{ github.workflow }}" != "${{ steps.key.outputs.key }}" ] && c=5 || c=1
+          
+          LATEST_TAG=$(curl -s $API_URL | jq -r .tag_name)
+          
+          echo "FEX_VER: $LATEST_TAG"
+
+          seq $c | while read x; do \
+          [ -n "$LATEST_TAG" ] && echo 'patching Dockerfile' && sed -i "s|ARG FEX_VER=.*|ARG FEX_VER=${LATEST_TAG}|g" $GITHUB_WORKSPACE/Dockerfile; \
+          done
+
       - name: update resources
         env:
           GIT_ADR: "https://github.com/citizenfx/cfx-server-data/"
@@ -75,10 +89,14 @@ jobs:
           ver_new=$(grep '^ARG FIVEM_VER=' Dockerfile | cut -d'=' -f2)
           data_old=$(git show HEAD:Dockerfile | grep '^ARG DATA_VER=' | cut -d'=' -f2)
           data_new=$(grep '^ARG DATA_VER=' Dockerfile | cut -d'=' -f2)
-          changelog="FIVEM_NUM: ${num_old} -> ${num_new}
-          FIVEM_VER: ${ver_old} -> ${ver_new}
-          DATA_VER: ${data_old} -> ${data_new}"
-          
+          fex_old=$(git show HEAD:Dockerfile | grep '^ARG FEX_VER=' | cut -d'=' -f2)
+          fex_new=$(grep '^ARG FEX_VER=' Dockerfile | cut -d'=' -f2)
+          changelog=""
+          [ "${num_old}"  != "${num_new}"  ] && changelog+="FIVEM_NUM: ${num_old} -> ${num_new}\n"
+          [ "${ver_old}"  != "${ver_new}"  ] && changelog+="FIVEM_VER: ${ver_old} -> ${ver_new}\n"
+          [ "${data_old}" != "${data_new}" ] && changelog+="DATA_VER: ${data_old} -> ${data_new}\n"
+          [ "${fex_old}"  != "${fex_new}"  ] && changelog+="FEX_VER: ${fex_old} -> ${fex_new}\n"
+
           git diff --cached --quiet && exit 0 || git commit -m "feat: Update Tagged Versions" -m "${changelog}"
           git config --local credential.helper '!x() { echo "password=$GITHUB_TOKEN"; };x'
           git push origin $GITHUB_REF_NAME
