@@ -29,6 +29,7 @@ jobs:
           git clone https://github-actions:$GITHUB_TOKEN@${GITHUB_SERVER_URL##*/}/$GITHUB_REPOSITORY.git $GITHUB_WORKSPACE --branch $GITHUB_REF_NAME --depth=1 --single-branch
 
       - name: update fivem
+        id: update_fivem
         env:
           SRV_ADR: "https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/"
         run: |
@@ -52,9 +53,15 @@ jobs:
           git status
           git config --local user.name ${{ env.GIT_USER }}
           git config --local user.email ${{ env.GIT_EMAIL }}
-          git diff --cached --quiet && exit 0 || git commit -m "feat: Update FiveM version to ${version}"
+          if ! git diff --cached --quiet; then
+            git commit -m "feat: Update FiveM version to ${version}"
+            echo "updated=true" >> $GITHUB_OUTPUT
+          else
+            echo "updated=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: update fex-emu
+        id: update_fex-emu
         env:
           API_URL: "https://api.github.com/repos/FEX-Emu/FEX/releases/latest"
         run: |
@@ -73,9 +80,15 @@ jobs:
           git status
           git config --local user.name ${{ env.GIT_USER }}
           git config --local user.email ${{ env.GIT_EMAIL }}
-          git diff --cached --quiet && exit 0 || git commit -m "feat: Update FEX-EMU version to ${LATEST_TAG}"
+          if ! git diff --cached --quiet; then
+            git commit -m "feat: Update FEX-EMU version to ${LATEST_TAG}"
+            echo "updated=true" >> $GITHUB_OUTPUT
+          else
+            echo "updated=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: update resources
+        id: update_resources
         env:
           GIT_ADR: "https://github.com/citizenfx/cfx-server-data/"
         run: |
@@ -94,7 +107,12 @@ jobs:
           git status
           git config --local user.name ${{ env.GIT_USER }}
           git config --local user.email ${{ env.GIT_EMAIL }}
-          git diff --cached --quiet && exit 0 || git commit -m "feat: Update resources version to ${LATEST_HASH}"
+          if ! git diff --cached --quiet; then
+            git commit -m "feat: Update resources version to ${LATEST_HASH}"
+            echo "updated=true" >> $GITHUB_OUTPUT
+          else
+            echo "updated=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: push
         env:
@@ -103,3 +121,9 @@ jobs:
           git config --local credential.helper '!x() { echo "password=$GITHUB_TOKEN"; };x'
           git push origin $GITHUB_REF_NAME
 
+      - name: trigger build workflow
+        if: steps.update_fivem.outputs.updated == 'true' || steps.update_fex-emu.outputs.updated == 'true' || steps.update_resources.outputs.updated == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run docker-test.yml

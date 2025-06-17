@@ -1,8 +1,8 @@
 name: Build for Test Docker Image
 
 on:
-  schedule:
-    - cron: '44 14 */3 * 2'
+#  schedule:
+#    - cron: '44 14 */3 * 2'
   push:
     branches: [ "master" ]
   workflow_dispatch:
