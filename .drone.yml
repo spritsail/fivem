@@ -20,7 +20,7 @@ steps:
     repo: spritsail/fivem
     tags:
     - latest
-    - "%label org.label-schema.version"
+    - "%label org.opencontainers.image.version"
     delete: no  # so we can push to dockerhub+ghcr
   when:
     branch:
@@ -37,7 +37,7 @@ steps:
     repo: spritsail/fivem
     tags:
     - latest
-    - "%label org.label-schema.version"
+    - "%label org.opencontainers.image.version"
     delete: no  # so we can push to dockerhub
   when:
     branch:
@@ -53,7 +53,7 @@ steps:
     repo: spritsail/fivem
     tags:
     - latest
-    - "%label org.label-schema.version"
+    - "%label org.opencontainers.image.version"
   when:
     branch:
     - master
