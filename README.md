@@ -26,6 +26,10 @@ The container should be stopped so fivem can be configured to the user requireme
 > Only building and using on AMD64 and ARM64 is supported. 
 > Architectures such as ARMv7 or other architectures are not supported with this image.
 
+### Build state: 
+[![Build for Test Docker Image](https://github.com/LizenzFass78851/docker-fivem-fexemu/actions/workflows/docker-test.yml/badge.svg?branch=master)](https://github.com/LizenzFass78851/docker-fivem-fexemu/actions/workflows/docker-test.yml)
+[![Update Tagged Versions](https://github.com/LizenzFass78851/docker-fivem-fexemu/actions/workflows/update_tagged_versions.yml/badge.svg?branch=master)](https://github.com/LizenzFass78851/docker-fivem-fexemu/actions/workflows/update_tagged_versions.yml)
+
 ## License Key
 
 A freely obtained license key is required to use this server, which should be declared as `$LICENSE_KEY`. A tutorial on how to obtain a license key can be found [here](https://forum.fivem.net/t/explained-how-to-make-add-a-server-key/56120).
