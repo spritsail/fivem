@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'LizenzFass78851/docker-fivem-fexemu'
     env:           
-      GIT_USER: github-actions
-      GIT_EMAIL: github-actions@github.com
+      GIT_USER: github-actions[bot]
+      GIT_EMAIL: github-actions[bot]@users.noreply.github.com
 
     steps:
       - name: key
