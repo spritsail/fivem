@@ -72,7 +72,7 @@ jobs:
           echo "FEX_VER: $LATEST_TAG"
 
           seq $c | while read x; do \
-          [ -n "$LATEST_TAG" ] && echo 'patching Dockerfile' && sed -i "s|ARG FEX_VER=.*|ARG FEX_VER=${LATEST_TAG}|g" $GITHUB_WORKSPACE/Dockerfile; \
+          [ -n "$LATEST_TAG" ] && [ "$LATEST_TAG" != "null" ] && echo 'patching Dockerfile' && sed -i "s|ARG FEX_VER=.*|ARG FEX_VER=${LATEST_TAG}|g" $GITHUB_WORKSPACE/Dockerfile; \
           done
 
           # Commit FEX-EMU changes if any
