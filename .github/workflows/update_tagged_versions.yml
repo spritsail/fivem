@@ -60,15 +60,19 @@ jobs:
             echo "updated=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Find latest tag (update fex-emu)
+        id: update_fex-emu_find_latest
+        uses: oprypin/find-latest-tag@v1
+        with:
+          repository: FEX-Emu/FEX
+          releases-only: true
       - name: update fex-emu
         id: update_fex-emu
-        env:
-          API_URL: "https://api.github.com/repos/FEX-Emu/FEX/releases/latest"
         run: |
           [ "${{ github.workflow }}" != "${{ steps.key.outputs.key }}" ] && c=5 || c=1
-          
-          LATEST_TAG=$(curl -s $API_URL | jq -r .tag_name)
-          
+
+          LATEST_TAG=${{ steps.update_fex-emu_find_latest.outputs.tag }}
+
           echo "FEX_VER: $LATEST_TAG"
 
           seq $c | while read x; do \
