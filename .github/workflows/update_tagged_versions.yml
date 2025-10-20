@@ -14,16 +14,10 @@ jobs:
       GIT_EMAIL: github-actions[bot]@users.noreply.github.com
 
     steps:
-      - uses: actions/checkout@v5
+      - name: clone
+        uses: actions/checkout@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          set-safe-directory: true
-          repository: ${{ github.repository }}
-          ref: ${{ github.ref_name }}
-          path: ${{ github.workspace }}
-          fetch-depth: 1
           clean: false
-          persist-credentials: true
 
       - name: update fivem
         id: update_fivem
