@@ -14,13 +14,6 @@ jobs:
       GIT_EMAIL: github-actions[bot]@users.noreply.github.com
 
     steps:
-      - name: key
-        id: key
-        run: |
-          export KEY="${GITHUB_WORKFLOW%-*}"
-          echo "key=$KEY" >> $GITHUB_OUTPUT
-          echo "################################################################" && bash -c "echo KEY=$KEY"
-
       - uses: actions/checkout@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -37,8 +30,6 @@ jobs:
         env:
           SRV_ADR: "https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/"
         run: |
-          [ "${{ github.workflow }}" != "${{ steps.key.outputs.key }}" ] && c=5 || c=1
-          
           DL_URL="$(wget -qO- "$SRV_ADR" | grep -oE 'href="\./[0-9]+-[^/]+/fx\.tar\.xz"' | sed -E 's#href="\./([^"]+)".*#\1#' | sort -t- -k1,1n | tail -n1)"
           
           without_suffix=${DL_URL%/fx.tar.xz}
@@ -47,10 +38,8 @@ jobs:
           echo "FIVEM_NUM: $version"
           echo "FIVEM_VER: $without_suffix"
 
-          seq $c | while read x; do \
-          [ -n "$version" ]        && [[ "$version" =~ ^[0-9]+$ ]]                     && echo 'patching Dockerfile' && sed -i "s|ARG FIVEM_NUM=.*|ARG FIVEM_NUM=${version}|g"        $GITHUB_WORKSPACE/Dockerfile; \
-          [ -n "$without_suffix" ] && [[ "$without_suffix" =~ ^[0-9]+-[0-9a-f]{40}$ ]] && echo 'patching Dockerfile' && sed -i "s|ARG FIVEM_VER=.*|ARG FIVEM_VER=${without_suffix}|g" $GITHUB_WORKSPACE/Dockerfile; \
-          done
+          [ -n "$version" ]        && [[ "$version" =~ ^[0-9]+$ ]]                     && echo 'patching Dockerfile' && sed -i "s|ARG FIVEM_NUM=.*|ARG FIVEM_NUM=${version}|g"        $GITHUB_WORKSPACE/Dockerfile
+          [ -n "$without_suffix" ] && [[ "$without_suffix" =~ ^[0-9]+-[0-9a-f]{40}$ ]] && echo 'patching Dockerfile' && sed -i "s|ARG FIVEM_VER=.*|ARG FIVEM_VER=${without_suffix}|g" $GITHUB_WORKSPACE/Dockerfile
 
           # Commit FiveM changes if any
           git add .
@@ -73,15 +62,11 @@ jobs:
       - name: update fex-emu
         id: update_fex-emu
         run: |
-          [ "${{ github.workflow }}" != "${{ steps.key.outputs.key }}" ] && c=5 || c=1
-
           LATEST_TAG=${{ steps.update_fex-emu_find_latest.outputs.tag }}
 
           echo "FEX_VER: $LATEST_TAG"
 
-          seq $c | while read x; do \
-          [ -n "$LATEST_TAG" ] && [ "$LATEST_TAG" != "null" ] && echo 'patching Dockerfile' && sed -i "s|ARG FEX_VER=.*|ARG FEX_VER=${LATEST_TAG}|g" $GITHUB_WORKSPACE/Dockerfile; \
-          done
+          [ -n "$LATEST_TAG" ] && [ "$LATEST_TAG" != "null" ] && echo 'patching Dockerfile' && sed -i "s|ARG FEX_VER=.*|ARG FEX_VER=${LATEST_TAG}|g" $GITHUB_WORKSPACE/Dockerfile
 
           # Commit FEX-EMU changes if any
           git add .
@@ -100,15 +85,11 @@ jobs:
         env:
           GIT_ADR: "https://github.com/citizenfx/cfx-server-data/"
         run: |
-          [ "${{ github.workflow }}" != "${{ steps.key.outputs.key }}" ] && c=5 || c=1
-          
           LATEST_HASH=$(git ls-remote "${{env.GIT_ADR}}" HEAD | cut -f1)
           
           echo "DATA_VER: $LATEST_HASH"
 
-          seq $c | while read x; do \
-          [ -n "$LATEST_HASH" ] && [[ "$LATEST_HASH" =~ ^[0-9a-f]{40}$ ]] && echo 'patching Dockerfile' && sed -i "s|ARG DATA_VER=.*|ARG DATA_VER=${LATEST_HASH}|g" $GITHUB_WORKSPACE/Dockerfile; \
-          done
+          [ -n "$LATEST_HASH" ] && [[ "$LATEST_HASH" =~ ^[0-9a-f]{40}$ ]] && echo 'patching Dockerfile' && sed -i "s|ARG DATA_VER=.*|ARG DATA_VER=${LATEST_HASH}|g" $GITHUB_WORKSPACE/Dockerfile
 
           # Commit resources changes if any
           git add .
