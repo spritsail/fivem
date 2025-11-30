@@ -34,7 +34,7 @@ ADD https://github.com/FEX-Emu/FEX.git#${FEX_VER} ./
 ARG CC=clang-13
 ARG CXX=clang++-13
 RUN mkdir build \
-    && cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DUSE_LINKER=lld -DENABLE_LTO=True -DBUILD_TESTS=False -DENABLE_ASSERTIONS=False -G Ninja . \
+    && cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DUSE_LINKER=lld -DENABLE_LTO=True -DBUILD_TESTING=False -DENABLE_ASSERTIONS=False -G Ninja . \
     && ninja
 
 WORKDIR /FEX/build
