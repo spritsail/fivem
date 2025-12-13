@@ -16,8 +16,16 @@ env:
   IMAGE_TAG: ${{ github.sha }}
 
 jobs:
-  test_amd64_arm64:
-    runs-on: ubuntu-24.04-arm
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+          - runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    env:
+      CONTAINER_NAME: test-fivem
     permissions:
       contents: read
 
@@ -52,9 +60,32 @@ jobs:
           build-args: GH_TOKEN=${{ github.token }}
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64
           cache-to: type=gha,mode=max,ignore-error=true
           cache-from: type=gha
           push: false
+          load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: test - start
+        run: |
+          sudo docker run -t -d \
+          -e NO_DEFAULT_CONFIG=true \
+          -e NO_LICENSE_KEY=true \
+          --name ${{ env.CONTAINER_NAME }} \
+          $(echo "${{ steps.meta.outputs.tags }}" | head -n1)
+      - name: test - check logs
+        uses: crazy-max/.github/.github/actions/container-logs-check@main
+        with:
+          container_name: ${{ env.CONTAINER_NAME }}
+          log_check: "Starting txAdmin"
+          timeout: 120
+      - name: test - show logs
+        if: always()
+        run: |
+          sudo docker logs ${{ env.CONTAINER_NAME }} || true
+      - name: test - stop and remove
+        if: always()
+        run: |
+          sudo docker stop -t 10 ${{ env.CONTAINER_NAME }} || sudo docker stop -s SIGKILL -t 10 ${{ env.CONTAINER_NAME }} || true
+          sudo docker rm -f ${{ env.CONTAINER_NAME }}
