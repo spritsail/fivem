@@ -55,8 +55,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /root/.fex-emu/RootFS/Ubuntu_22_04
-RUN curl -L https://rootfs.fex-emu.gg/RootFS_links.json -o /tmp/RootFS_links.json \
-    && curl -L "$(jq -r '.v1 | ."Ubuntu 22.04 (SquashFS)" | .URL' /tmp/RootFS_links.json)" -o /tmp/ubuntu.sqsh \
+ADD https://rootfs.fex-emu.gg/RootFS_links.json /tmp/RootFS_links.json
+RUN curl -L "$(jq -r '.v1 | ."Ubuntu 22.04 (SquashFS)" | .URL' /tmp/RootFS_links.json)" -o /tmp/ubuntu.sqsh \
     && sqfs2tar /tmp/ubuntu.sqsh | tar -x -p --numeric-owner -C ./
 
 WORKDIR /root/.fex-emu
@@ -79,12 +79,12 @@ RUN apt update \
     && apt install -y wget xz-utils \
     && rm -rf /var/lib/apt/lists/* 
 
-RUN mkdir -p /opt/cfx-server \
-    && wget -O- https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/${FIVEM_VER}/fx.tar.xz \
-    | tar xJ --strip-components=0 -C /opt/cfx-server \
-    && mkdir -p /opt/cfx-server-data \
-    && wget -O- http://github.com/citizenfx/cfx-server-data/archive/${DATA_VER}.tar.gz \
-    | tar xz --strip-components=1 -C /opt/cfx-server-data
+WORKDIR /opt/cfx-server
+ADD https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/${FIVEM_VER}/fx.tar.xz /tmp/fx.tar.xz
+RUN tar xJ --strip-components=0 -C /opt/cfx-server -f /tmp/fx.tar.xz
+WORKDIR /opt/cfx-server-data
+ADD http://github.com/citizenfx/cfx-server-data/archive/${DATA_VER}.tar.gz /tmp/cfx-server-data.tar.gz
+RUN tar xz --strip-components=1 -C /opt/cfx-server-data -f /tmp/cfx-server-data.tar.gz
 
 ADD server.cfg /opt/cfx-server-data
 
