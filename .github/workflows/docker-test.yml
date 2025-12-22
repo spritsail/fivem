@@ -5,14 +5,16 @@ on:
 #    - cron: '44 14 */3 * 2'
   push:
     branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}
+  group: ${{ (github.event_name == 'pull_request') && github.workflow && '-' && github.event.pull_request.number || github.workflow }}
   cancel-in-progress: true
 
 env:
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: ${{ github.event.pull_request.base.repo.name || github.repository }}
   IMAGE_TAG: ${{ github.sha }}
 
 jobs:
@@ -26,6 +28,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     env:
       CONTAINER_NAME: test-fivem
+
     permissions:
       contents: read
 
@@ -51,7 +54,7 @@ jobs:
         with:
           images: ${{ env.IMAGE_NAME }}
           flavor: |
-            latest=${{ startsWith(github.ref, 'refs/heads/master') }}
+            latest=${{ github.ref_name == 'master' }}
 
       - name: Build main Docker image
         id: build
@@ -60,8 +63,8 @@ jobs:
           build-args: GH_TOKEN=${{ github.token }}
           context: .
           file: ./Dockerfile
-          cache-to: type=gha,mode=max,ignore-error=true
-          cache-from: type=gha
+          cache-to: ${{ github.event_name != 'pull_request' && 'type=gha,mode=max,ignore-error=true' || '' }}
+          cache-from: ${{ github.event_name != 'pull_request' && 'type=gha' || '' }}
           push: false
           load: true
           tags: ${{ steps.meta.outputs.tags }}
