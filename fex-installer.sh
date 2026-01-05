@@ -27,7 +27,7 @@ apt-get update
 case "$CPUREV" in
     0|1) FEX_EMU_ARCH_REV="fex-emu-armv8.0" ;;
     2|3) FEX_EMU_ARCH_REV="fex-emu-armv8.2" ;;
-    4)     FEX_EMU_ARCH_REV="fex-emu-armv8.4" ;;
+    4)   FEX_EMU_ARCH_REV="fex-emu-armv8.4" ;;
     *)
         echo "Unsupported CPU revision: $CPUREV" >&2
         exit 1
