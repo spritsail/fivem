@@ -1,0 +1,114 @@
+name: Build and Publish Docker Image
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  schedule:
+    - cron: '44 14 */3 * 2'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ (github.event_name == 'pull_request') && github.workflow && '-' && github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ (github.event_name == 'pull_request') && true || true }}
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.event.pull_request.base.repo.name || github.repository }}
+  IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+
+    permissions:
+      contents: read
+      packages: write
+
+    env:
+      CONTAINER_NAME: test-fivem
+
+    steps:
+      - name: Checkout Dockerfile
+        id: checkout
+        uses: actions/checkout@v6
+
+      - name: Setup QEMU
+        id: qemu
+        uses: docker/setup-qemu-action@v3
+        with:
+          image: tonistiigi/binfmt:latest
+          platforms: all
+      
+      - name: Setup Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        id: ghcr
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ github.token }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          flavor: |
+            latest=${{ github.ref_name == 'main' }}
+
+      - name: Build main Docker image
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          build-args: GH_TOKEN=${{ github.token }}
+          context: .
+          file: ./Dockerfile
+          cache-to: ${{ github.event_name != 'pull_request' && 'type=gha,mode=max,ignore-error=true' || '' }}
+          cache-from: ${{ github.event_name != 'pull_request' && 'type=gha' || '' }}
+          push: false
+          load: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: test - start
+        run: |
+          sudo docker run -t -d \
+          -e NO_DEFAULT_CONFIG=true \
+          -e NO_LICENSE_KEY=true \
+          --name ${{ env.CONTAINER_NAME }} \
+          $(echo "${{ steps.meta.outputs.tags }}" | head -n1)
+      - name: test - check logs
+        uses: crazy-max/.github/.github/actions/container-logs-check@main
+        with:
+          container_name: ${{ env.CONTAINER_NAME }}
+          log_check: "Starting txAdmin"
+          timeout: 120
+      - name: test - show logs
+        if: always()
+        run: |
+          sudo docker logs ${{ env.CONTAINER_NAME }} || true
+      - name: test - stop and remove
+        if: always()
+        run: |
+          sudo docker stop -t 10 ${{ env.CONTAINER_NAME }} || sudo docker stop -s SIGKILL -t 10 ${{ env.CONTAINER_NAME }} || true
+          sudo docker rm -f ${{ env.CONTAINER_NAME }}
+
+      - name: Build and push main Docker image
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          build-args: GH_TOKEN=${{ github.token }}
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64
+          cache-to: ${{ github.event_name != 'pull_request' && 'type=gha,mode=max,ignore-error=true' || '' }}
+          cache-from: ${{ github.event_name != 'pull_request' && 'type=gha' || '' }}
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
