@@ -42,7 +42,16 @@ if [ -z "${NO_LICENSE_KEY}${NO_LICENCE_KEY}" ]; then
     CONFIG_ARGS="$CONFIG_ARGS +set sv_licenseKey ${LICENSE_KEY}"
 fi
 
-exec $( [ "$(uname -m)" = "aarch64" ] && echo "FEX" ) \
+
+if [ "$(uname -m)" = "aarch64" ]; then
+    FEX_CHECK="$(command -v "FEX")"
+    if [ -z "$FEX_CHECK" ]; then
+        echo "FEX not found, attempting installation..." >&2
+        fex-installer.sh && continue
+    fi
+fi
+
+exec $( [ "$(uname -m)" = "aarch64" ] && echo "$(command -v "FEX")") \
     $CFX_SERVER/alpine/opt/cfx-server/ld-musl-x86_64.so.1 \
     --library-path "$CFX_SERVER/alpine/usr/lib/v8/:$CFX_SERVER/alpine/lib/:$CFX_SERVER/alpine/usr/lib/" \
     -- \

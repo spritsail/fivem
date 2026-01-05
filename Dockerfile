@@ -13,37 +13,6 @@ RUN sed -E -i 's#http://[^[:space:]]*ubuntu\.com/ubuntu-ports#http://mirrors.dot
 
 # --------------------------------------------------------------------------------
 
-FROM main AS fex-builder-amd64
-
-FROM --platform=arm64 main AS fex-builder-arm64
-
-ARG DEBIAN_FRONTEND
-
-ARG FEX_VER
-
-RUN apt update && apt install -y cmake \
-    clang-13 llvm-13 nasm ninja-build pkg-config \
-    libcap-dev libglfw3-dev libepoxy-dev python3-dev libsdl2-dev \
-    python3 linux-headers-generic  \
-    git qtbase5-dev qtdeclarative5-dev lld \
-    && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /FEX
-ADD https://github.com/FEX-Emu/FEX.git#${FEX_VER} ./
-
-ARG CC=clang-13
-ARG CXX=clang++-13
-RUN mkdir build \
-    && cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DUSE_LINKER=lld -DENABLE_LTO=True -DBUILD_TESTING=False -DENABLE_ASSERTIONS=False -G Ninja . \
-    && ninja
-
-WORKDIR /FEX/build
-
-ARG TARGETARCH
-FROM fex-builder-${TARGETARCH} AS fex-builder
-
-# --------------------------------------------------------------------------------
-
 FROM main AS fex-rootfs-amd64
 
 FROM --platform=arm64 main AS fex-rootfs-arm64
@@ -52,7 +21,7 @@ ARG DEBIAN_FRONTEND
 
 RUN apt-get update \
     && apt-get install -y jq curl squashfs-tools-ng \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /root/.fex-emu/RootFS/Ubuntu_22_04
 ADD https://rootfs.fex-emu.gg/RootFS_links.json /tmp/RootFS_links.json
@@ -77,7 +46,7 @@ ARG DATA_VER
 
 RUN apt update \
     && apt install -y wget xz-utils \
-    && rm -rf /var/lib/apt/lists/* 
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt/cfx-server
 ADD https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/${FIVEM_VER}/fx.tar.xz /tmp/fx.tar.xz
@@ -94,6 +63,16 @@ FROM main AS base-amd64
 FROM --platform=arm64 main AS base-arm64
 
 ARG DEBIAN_FRONTEND
+
+RUN apt update \
+    && apt install -y --no-install-recommends \
+    software-properties-common \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gpg-agent \
+    && apt-get clean \
+    && add-apt-repository -y ppa:fex-emu/fex
 
 RUN apt update \
     && apt install -y \
@@ -114,9 +93,9 @@ RUN apt update \
     libqt5quick5-gles \
     libqt5widgets5 \
     libstdc++6 \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-COPY --from=fex-builder /FEX/Bin/* /usr/bin/
+COPY --chmod=0755 ./fex-installer.sh /usr/local/bin/fex-installer.sh
 COPY --from=fex-rootfs /root/.fex-emu /root/.fex-emu
 
 ARG TARGETARCH
@@ -139,7 +118,7 @@ LABEL org.opencontainers.image.authors="" \
 
 RUN apt update \
     && apt install -y tini \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY --from=fx-downloader /opt/cfx-server /opt/cfx-server
 COPY --from=fx-downloader /opt/cfx-server-data /opt/cfx-server-data
