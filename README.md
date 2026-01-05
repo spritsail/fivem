@@ -15,8 +15,7 @@ The container should be stopped so fivem can be configured to the user requireme
 > For AMD64 devices or VMs it is recommended to use a different Docker container image e.g. [spritsail/fivem](https://github.com/spritsail/fivem) although this container image also works on AMD64 devices and VMs.
 
 > [!IMPORTANT]
-> The Docker container must be built on the device to be executed (especially on ARM64) using, for example, Docker Build for FEX-Emu to work under Docker.
-> Therefore, there is no container image on a Docker registry.
+> The docker container is experimental and, if the variant from the container registry does not work, should be built manually under arm64 devices using Docker Build.
 
 > [!WARNING]
 > - Running it on an AMD64 device or VM is done without using FEX-Emu and therefore remains native.
@@ -26,8 +25,13 @@ The container should be stopped so fivem can be configured to the user requireme
 > Only building and using on AMD64 and ARM64 is supported. 
 > Architectures such as ARMv7 or other architectures are not supported with this image.
 
-### Build state: 
-[![Build for Test Docker Image](https://github.com/LizenzFass78851/docker-fivem-fexemu/actions/workflows/docker-test.yml/badge.svg?branch=master)](https://github.com/LizenzFass78851/docker-fivem-fexemu/actions/workflows/docker-test.yml)
+# Tags
+
+| Image | Tag | Build | Latest |
+|:------------------:|:--------------:|:-----------------:|:-----------------:|
+| ghcr.io/lizenzfass78851/docker-fivem-fexemu | master | [![Build and Publish Docker Image](https://github.com/LizenzFass78851/docker-fivem-fexemu/actions/workflows/docker-image.yml/badge.svg?branch=master)](https://github.com/LizenzFass78851/docker-fivem-fexemu/actions/workflows/docker-image.yml) | 📌 |
+
+### Build state:
 [![Update Tagged Versions](https://github.com/LizenzFass78851/docker-fivem-fexemu/actions/workflows/update_tagged_versions.yml/badge.svg?branch=master)](https://github.com/LizenzFass78851/docker-fivem-fexemu/actions/workflows/update_tagged_versions.yml)
 
 ## License Key
