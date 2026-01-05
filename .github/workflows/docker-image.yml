@@ -63,7 +63,7 @@ jobs:
             latest=${{ github.ref_name == 'main' }}
 
       - name: Build main Docker image
-        id: build
+        id: prebuild
         uses: docker/build-push-action@v6
         with:
           build-args: GH_TOKEN=${{ github.token }}
