@@ -95,7 +95,7 @@ RUN apt update \
     libstdc++6 \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-COPY --chmod=0755 ./fex-installer.sh /usr/local/bin/fex-installer.sh
+COPY --chmod=755 fex-installer.sh /usr/local/bin/fex-installer.sh
 COPY --from=fex-rootfs /root/.fex-emu /root/.fex-emu
 
 ARG TARGETARCH
