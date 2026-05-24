@@ -42,6 +42,9 @@ LABEL org.opencontainers.image.authors="Spritsail <fivem@spritsail.io>" \
 COPY --from=builder /output/ /
 RUN apk add --no-cache tini
 
+# Temporary to allow soft deprecation.
+ENV NO_TXADMIN="DONTANSWERTHEPHONETOLESTERCREST"
+
 WORKDIR /config
 EXPOSE 30120
 
