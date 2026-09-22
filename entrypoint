@@ -1,18 +1,19 @@
 #!/bin/sh
 
+# default values for environment variables
+: : "${HOSTNAME:=My new Dockerized FXServer}"
+: : "${RCON_PASSWORD:=$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 16)}"
+: : "${SLOTS:=32}"
+: : "${STEAM_WEBAPIKEY:=}"
+: : "${SCRIPT_HOOK_ALLOWED:=0}"
+
 if [ -n "$DEBUG" ]; then
     set -x
 fi
 
-if ! find . -mindepth 1 | read -r; then
-    >&2 echo "Creating default configs..."
-    cp -r /opt/cfx-server-data/* /config
-    RCON_PASS="${RCON_PASSWORD-$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 16)}"
-    sed -i "s/{RCON_PASS}/${RCON_PASS}/g" /config/server.cfg;
-    >&2 echo "----------------------------------------------"
-    >&2 echo "RCON password is set to: ${RCON_PASS}"
-    >&2 echo "----------------------------------------------"
-fi
+# generate the server.cfg controlled fully by the environment variables
+envsubst < /opt/cfx-server-data/server.cfg > /config/server.cfg
+
 
 if [ -z "$NO_ONESYNC" ]; then
     ONESYNC_ARGS="+set onesync on +set onesync_population true"
@@ -23,7 +24,7 @@ if [ -z "${NO_DEFAULT_CONFIG}" ]; then
     CONFIG_ARGS="$CONFIG_ARGS $ONESYNC_ARGS +exec /config/server.cfg"
 fi
 
-# English is hard
+# require a license key
 if [ -z "${NO_LICENSE_KEY}${NO_LICENCE_KEY}" ]; then
     if [ -z "${LICENSE_KEY}" ] && [ -n "${LICENCE_KEY}" ]; then
         LICENSE_KEY="${LICENCE_KEY}"

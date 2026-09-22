@@ -34,6 +34,33 @@ docker run -d \
   spritsail/fivem
 ```
 
+#### Using docker-compose
+
+```
+services:
+  fivem:
+    image: spritsail/fivem
+    container_name: fivem
+    restart: always
+    stdin_open: true
+    tty: true
+    volumes:
+      - "/path/to/resources/folder:/config"
+      # Enable a volume mount for txAdmin's data files
+      # - "/path/to/txData/folder:/txData"
+    ports:
+      - "30120:30120"
+      - "30120:30120/udp"
+      # Allow txAdmin's webserver port to be accessible
+      # - "40120:40120"
+    environment:
+      HOSTNAME: "My new Dockerized FXServer"
+      RCON_PASSWORD: "randomly-generated-password"
+      SLOTS: 32
+      LICENSE_KEY: "my-license-key"
+
+```
+
 _It is important that you use `interactive` and `pseudo-tty` options otherwise the container will crash on startup_
 See [issue #3](https://github.com/spritsail/fivem/issues/3)
 
@@ -68,3 +95,7 @@ docker run -d \
 - `NO_DEFAULT_CONFIG` - Optional. Set to any non-zero value to disable the default exec config. This is required for txAdmin.
 - `NO_LICENSE_KEY` - Optional. Set to any non-zero length value to disable specifying the license key in the environment. Useful if your license key is in a config file.
 - `NO_ONESYNC` - Optional. Set to any non-zero value to disable OneSync being added to the default configs.
+- `HOSTNAME` - Optional. Set your server hostname.
+- `SLOTS` - Optional. controls your server slots (defaults to 32).
+- `STEAM_WEBAPIKEY` - Optional. use this if you want to use Steam authentication.
+- `SCRIPT_HOOK_ALLOWED` - Optional. controls This allows players to use scripthook-based plugins such as the legacy Lambda Menu. (default 0)
