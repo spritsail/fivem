@@ -18,4 +18,4 @@ services:
       HOSTNAME: "My new Dockerized FXServer"
       RCON_PASSWORD: "randomly-generated-password"
       SLOTS: "32"
-      LICENSE_KEY: "ypzr37burcuplgzrtik4a5vyjcbahrz0"
+      LICENSE_KEY: "my-license-key"
