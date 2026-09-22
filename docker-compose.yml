@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   fivem:
     image: spritsail/fivem
@@ -17,4 +15,7 @@ services:
       # Allow txAdmin's webserver port to be accessible
       # - "40120:40120"
     environment:
-      LICENSE_KEY: "license-key-here"
+      HOSTNAME: "My new Dockerized FXServer"
+      RCON_PASSWORD: "randomly-generated-password"
+      SLOTS: "32"
+      LICENSE_KEY: "ypzr37burcuplgzrtik4a5vyjcbahrz0"
