@@ -5,7 +5,6 @@ services:
     image: spritsail/fivem
     container_name: fivem
     restart: always
-    stdin_open: true
     tty: true
     volumes:
       - "/path/to/resources/folder:/config"
