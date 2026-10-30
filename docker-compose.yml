@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   fivem:
     image: spritsail/fivem
