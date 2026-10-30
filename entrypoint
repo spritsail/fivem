@@ -14,13 +14,19 @@ if ! find . -mindepth 1 | read -r; then
     >&2 echo "----------------------------------------------"
 fi
 
-if [ -z "$NO_ONESYNC" ]; then
-    ONESYNC_ARGS="+set onesync on +set onesync_population true"
+if [ -n "$NO_ONESYNC" ]; then
+    >&2 printf "NO_ONESYNC has been removed, as Onesync is now the default for FiveM. Please use 'set onesync off' in your server config if you require this option.\n\n"
+    exit 1
+fi
+
+# These two arguments do the same thing - just set one to the other!
+if [ -n "$ENABLE_TXADMIN" ]; then
+  NO_DEFAULT_CONFIG="$ENABLE_TXADMIN"
 fi
 
 CONFIG_ARGS=
 if [ -z "${NO_DEFAULT_CONFIG}" ]; then
-    CONFIG_ARGS="$CONFIG_ARGS $ONESYNC_ARGS +exec /config/server.cfg"
+    CONFIG_ARGS="$CONFIG_ARGS +exec /config/server.cfg"
 fi
 
 # English is hard
@@ -30,7 +36,7 @@ if [ -z "${NO_LICENSE_KEY}${NO_LICENCE_KEY}" ]; then
     fi
 
     if [ -z "${NO_DEFAULT_CONFIG}"] && [ -z "${LICENSE_KEY}" ]; then
-        >&2 printf "License key not found in environment, please create one at https://keymaster.fivem.net!\n"
+        >&2 printf "License key not found in environment, please create one at https://portal.cfx.re/servers/registration-keys!\n"
         exit 1
     fi
 

@@ -30,22 +30,22 @@ docker run -d \
   -p 30120:30120 \
   -p 30120:30120/udp \
   -v /volumes/fivem:/config \
-  -ti \
+  -t \
   spritsail/fivem
 ```
 
-_It is important that you use `interactive` and `pseudo-tty` options otherwise the container will crash on startup_
+_It is important that you use the `pseudo-tty` option otherwise the container will crash on startup_
 See [issue #3](https://github.com/spritsail/fivem/issues/3)
 
 ## Image tags
 
-This image has two tags - a `latest` tag (the default), based on the most recent FiveM build, and a `stable` tag, based on the "optional" FiveM release. We do not provide an image based on the recommended FiveM release as it is typically too stale.
+This image has one fixed tag - a `latest` tag (the default), based on the most recent FiveM build. Alternatively, the FiveM version number (e.g. `38039`) can be used for a specific build. We do not provide an image based on the recommended FiveM release as it is typically too stale, and optional releases have been deprecated upstream.
 
 ### Web UI (txAdmin)
 
-The web UI can be enabled by not passing any `+exec` config to the FXServer binary. This can be achieved by setting the `NO_DEFAULT_CONFIG` environment variable (see below).
+The web UI can be enabled by not passing any `+exec` config to the FXServer binary. This can be achieved by setting the `ENABLE_TXADMIN` or `NO_DEFAULT_CONFIG` environment variables (see below).
 
-`txAdmin` stores it's configuration and database data in `/txData`, so a volume can be set up to persist this data:
+txAdmin stores it's configuration and database data in `/txData`, so a volume can be set up to persist this data:
 
 ```sh
 docker run -d \
@@ -57,14 +57,15 @@ docker run -d \
   -p 40120:40120 \ # Allow txAdmin's webserver port to be accessible
   -v /volumes/fivem:/config \
   -v /volumes/txData:/txData \ # Can use a named volume as well -v txData:/txData \
-  -ti \
+  -t \
   spritsail/fivem
 ```
 
 ### Environment Variables
 
-- `LICENSE_KEY` - This is a required variable for the license key needed to start the server.
-- `RCON_PASSWORD` - A password to use for the RCON functionality of the fxserver. If not specified, a random 16 character password is assigned. This is only used upon creation of the default configs
+- `LICENSE_KEY` - This is a required variable for the license key needed to start the server. Not required for txAdmin.
+- `RCON_PASSWORD` - A password to use for the RCON functionality of the fxserver. If not specified, a random 16 character password is assigned and printed to the log on first start. This is only used upon creation of the default configs
+- `ENABLE_TXADMIN` - Optional. Set to any non-zero value to disable the default exec config, thereby enabling txAdmin. An alias of `NO_DEFAULT_CONFIG` below.
 - `NO_DEFAULT_CONFIG` - Optional. Set to any non-zero value to disable the default exec config. This is required for txAdmin.
 - `NO_LICENSE_KEY` - Optional. Set to any non-zero length value to disable specifying the license key in the environment. Useful if your license key is in a config file.
-- `NO_ONESYNC` - Optional. Set to any non-zero value to disable OneSync being added to the default configs.
+- `NO_ONESYNC` - Removed. Onesync is now the default option in FiveM. Add `set onesync off` to your config file if you need the old behaviour.
